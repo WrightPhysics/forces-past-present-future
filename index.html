@@ -1,0 +1,1424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Past, Present, and Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=STIX+Two+Text:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#E9EEF2; --sheet:#FBFCFD; --panel:#FFFFFF; --ink:#1D2833; --muted:#5A6A77;
+  --rule:#C9D3DB; --grid:#E1E8EE; --good:#2B7A4B; --warn:#A3462F; --bad:#C62828;
+  --vel:#5CB35A; --dv:#1F6B3F; --shade:#EDF3EE;
+  --f0:#2F6FB5; --f1:#C0432F; --f2:#2B8A55; --f3:#8246B5; --f4:#A87908;
+  --body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --math:'STIX Two Text','Cambria Math','Times New Roman',serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#11171D; --sheet:#171F27; --panel:#1B242D; --ink:#E4EBF1; --muted:#9BABB7;
+    --rule:#2E3B47; --grid:#222D37; --good:#6CCB95; --warn:#F08C74; --bad:#F2766B;
+    --vel:#7FD07A; --dv:#4FA36A; --shade:#1E2B26; --f0:#72A9EA; --f1:#EF7B67; --f2:#5FC68D; --f3:#B88BE6; --f4:#E3B343;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11171D; --sheet:#171F27; --panel:#1B242D; --ink:#E4EBF1; --muted:#9BABB7;
+  --rule:#2E3B47; --grid:#222D37; --good:#6CCB95; --warn:#F08C74; --bad:#F2766B;
+  --vel:#7FD07A; --dv:#4FA36A; --shade:#1E2B26; --f0:#72A9EA; --f1:#EF7B67; --f2:#5FC68D; --f3:#B88BE6; --f4:#E3B343;
+}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:1300px;margin:0 auto;padding:22px 20px 36px}
+h1{font-size:1.65rem;line-height:1.2;margin:0 0 6px;font-weight:700;letter-spacing:-0.01em}
+h2{font-size:1.05rem;margin:0 0 10px}
+.lede{margin:0 0 14px;color:var(--muted);max-width:80ch}
+.lede strong{color:var(--ink)}
+.bar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:stretch;margin:0 0 16px}
+.scn-row{display:flex;align-items:stretch;gap:8px;flex:1 1 300px;min-width:0;max-width:760px}
+.scn-row select{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--ink);border-radius:7px;padding:8px 10px;cursor:pointer;text-overflow:ellipsis}
+.nav-btn{flex:none;width:44px;font:inherit;font-size:1.25rem;line-height:1;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:7px;cursor:pointer}
+.nav-btn:hover:not(:disabled){background:var(--grid)}
+.nav-btn:disabled{opacity:.35;cursor:default}
+.seg{display:flex;border:1px solid var(--ink);border-radius:8px;overflow:hidden;flex:none}
+@media (max-width:480px){.seg{flex:1 1 100%}.seg button{flex:1;padding:8px 8px !important}}
+.seg button{font:inherit;font-weight:700;padding:8px 14px;border:0;background:var(--panel);color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.top{display:grid;grid-template-columns:minmax(200px,.8fr) minmax(240px,.9fr) minmax(340px,1.5fr);gap:16px;margin-bottom:16px;align-items:start}
+@media (max-width:1000px){.top{grid-template-columns:repeat(2,minmax(0,1fr))}.top .graph-rep{grid-column:1/-1}}
+@media (max-width:640px){.top{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px}
+.rep-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.rep-head h2{margin:0}
+.hide-btn{font:inherit;font-size:.85rem;color:var(--muted);background:transparent;border:1px solid var(--rule);border-radius:6px;padding:2px 10px;cursor:pointer;flex:none}
+.hide-btn[aria-pressed="true"]{color:var(--ink);border-color:var(--ink)}
+.rep-hidden{margin:0;padding:28px 12px;text-align:center;color:var(--muted);border:1.5px dashed var(--rule);border-radius:8px}
+.desc{margin:0 0 6px;max-width:60ch}
+.key{margin:0;color:var(--muted);font-size:.9rem}
+.note{font-size:.88rem;color:var(--muted);margin:6px 0 0}
+#sketch,#graph,#mmap{display:block;width:100%;height:auto}
+#graph{max-height:320px}
+#mmap{max-width:440px;margin:0 auto}
+.sk{stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sk-fill{fill:var(--sheet)}
+.sk-hatch{stroke:var(--muted);stroke-width:1.2;fill:none}
+.sk-lbl{font-family:var(--body);font-size:12.5px;fill:var(--ink)}
+.sk-note{font-family:var(--body);font-size:12px;fill:var(--muted);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.sk-math{font-family:var(--math);fill:var(--ink);white-space:pre}
+.sk-sys{fill:none;stroke:#C62828;stroke-width:3.5;stroke-dasharray:8 5}
+.sk-ref{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:3 3;fill:none}
+.g-axis{stroke:var(--ink);stroke-width:1.6;fill:none}
+.g-div{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 5}
+.g-curve{stroke:var(--ink);stroke-width:2.6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.g-cur{stroke:var(--dv);stroke-width:5;fill:none;stroke-linecap:round}
+.g-lbl{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.g-ph{font-family:var(--body);font-size:13px;font-weight:700;fill:var(--muted);letter-spacing:.04em}
+.g-ph.on{fill:var(--ink)}
+.g-hit{fill:transparent;cursor:pointer}
+.g-shade{fill:var(--shade)}
+.watch{margin-bottom:16px}
+.wstage{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
+.wstage #watch{flex:3 1 380px;min-width:0}
+#wvad{display:block;flex:1 1 220px;max-width:320px;aspect-ratio:1;background:var(--sheet);border:1px solid var(--rule);border-radius:8px}
+#wvad[hidden]{display:none}
+@media (max-width:640px){#wvad{flex:1 1 100%;max-width:240px;margin:0 auto}}
+.wv-t{font-family:var(--body);font-size:12px;font-weight:700;fill:var(--muted);letter-spacing:.04em}
+.wv-n{font-family:var(--body);font-size:12px;fill:var(--muted)}
+#watch{display:block;width:100%;height:auto;max-height:380px;background:var(--sheet);border:1px solid var(--rule);border-radius:8px}
+.wctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:10px}
+.wslide{flex:1 1 260px;min-width:0}
+.wslide input{width:100%;margin:0;accent-color:var(--dv);cursor:pointer}
+.wticks{display:flex;font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.04em}
+.wticks span{flex:1;text-align:center}
+.w-read{min-width:20ch;font-weight:700}
+.wopts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px}
+.wopts label{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
+#graph{cursor:pointer;touch-action:none}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:0 0 0}
+@media (max-width:480px){.tabs{flex-wrap:nowrap;gap:4px}.tab{padding:8px;font-size:.85rem}}
+.tab{font:inherit;flex:1 1 0;min-width:0;text-align:left;padding:10px 14px;border:1px solid var(--rule);border-bottom:0;border-radius:10px 10px 0 0;background:var(--sheet);color:var(--muted);cursor:pointer}
+.tab strong{display:block;color:var(--ink);letter-spacing:.04em}
+.tab[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:inset 0 4px 0 var(--dv)}
+.tab .done{color:var(--good);font-weight:700;margin-left:6px}
+.play{font:inherit;font-weight:700;flex:none;align-self:center;border-radius:7px;padding:8px 14px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--panel)}
+.phase{border-top-left-radius:0}
+.chain{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin-top:12px}
+.link{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--rule);border-radius:8px;background:var(--sheet);flex:1 1 150px}
+.link small{display:block;color:var(--muted);font-size:.8rem;font-weight:700;letter-spacing:.04em}
+.link strong{display:block;line-height:1.25}
+.link svg{flex:none}
+.then{align-self:center;color:var(--muted);font-weight:700}
+.story-tip{margin:-6px 0 14px;padding:8px 12px;border-left:4px solid var(--dv);background:var(--panel);border-radius:6px;max-width:90ch}
+.ph-head{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;margin-bottom:12px}
+.ph-head h2{margin:0;letter-spacing:.04em}
+#ph-desc{margin:0;max-width:85ch}
+.pill{display:inline-block;font-weight:700;font-size:.9rem;padding:2px 10px;border-radius:999px;border:1.5px solid currentColor}
+.pill.bal{color:var(--good)} .pill.unb{color:var(--warn)}
+.work{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.3fr);gap:16px;align-items:start}
+@media (max-width:900px){.work{grid-template-columns:1fr}}
+.side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.sub{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:12px}
+#fbd{display:block;width:100%;max-width:420px;margin:0 auto;aspect-ratio:1}
+.fbd-vec{cursor:pointer;outline:none}
+.fbd-vec.is-pending{opacity:.4}
+body.story .fbd-vec{cursor:default}
+.force-key{list-style:none;margin:8px 0 0;padding:10px 0 0;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:4px;font-size:.95rem}
+.flbl{font-family:var(--math);font-size:1.08em}
+.force-key .flbl{font-weight:700}
+.flbl sub{font-size:.68em}
+.main-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.main-head h2{margin:0}
+.tools{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.tools label{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
+.chips{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;color:var(--ink);background:var(--sheet);border:1px solid var(--rule);border-radius:7px;padding:6px 10px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.chip[aria-pressed="true"]{opacity:.55}
+.chip .sw{width:18px;height:5px;border-radius:3px;flex:none}
+button.btn{font:inherit;font-weight:700;border-radius:7px;padding:7px 14px;cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--f0);outline-offset:2px}
+.canvas-wrap{position:relative}
+#vad{display:block;width:100%;height:clamp(360px,60vh,600px);background:var(--sheet);border:1px solid var(--rule);border-radius:8px;touch-action:none;user-select:none;-webkit-user-select:none}
+.grid{stroke:var(--grid);stroke-width:1;fill:none}
+.rail{stroke-width:1.5;stroke-dasharray:2 7;stroke-linecap:round;stroke-opacity:.55}
+.rail.active{stroke-opacity:1;stroke-width:2}
+.hit{stroke:transparent;stroke-width:26;stroke-linecap:round;cursor:grab}
+body.story .hit{cursor:default}
+.handle{fill:transparent}
+.handle.free{cursor:pointer}
+.handle.locked{cursor:not-allowed}
+.vis,.vec text,.lab{pointer-events:none}
+.lab text,text.lab{paint-order:stroke;stroke:var(--sheet);stroke-width:5px;stroke-linejoin:round}
+.ring{fill:none;stroke-width:1.5;stroke-dasharray:3 3}
+.lbl{font-family:var(--math);fill:var(--ink)}
+.lbl.gap{fill:var(--warn)}
+.snap{fill:none;stroke:var(--ink);stroke-width:2}
+.closed{fill:none;stroke:var(--good);stroke-width:3}
+.inset{fill:var(--panel);stroke:var(--rule)}
+.inset-t{font-family:var(--body);font-size:12px;fill:var(--muted)}
+#vad.animating>*:not(.grid):not(#anim){opacity:.08;pointer-events:none}
+.bad-ring{fill:none;stroke:var(--bad);stroke-width:3;opacity:.85}
+#msg{margin:0 0 10px;max-width:70ch;min-height:3em}
+button.btn.btn-check{display:block;width:100%;margin-top:12px;padding:12px 14px;font-size:1.1rem;background:var(--ink);color:var(--panel);border-color:var(--ink)}
+#check{margin-top:12px;border:1px solid var(--rule);border-radius:8px;background:var(--sheet);padding:10px 14px}
+#check ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+#check li{display:grid;grid-template-columns:24px 1fr;gap:6px;align-items:start}
+#check .mk{font-weight:700;font-size:1.1rem;line-height:1.35;text-align:center}
+#check .ok .mk{color:var(--good)} #check .no .mk{color:var(--bad)} #check .maybe .mk{color:var(--warn)} #check .wait .mk{color:var(--muted)}
+#check .wait{color:var(--muted)}
+#check .ttl{font-weight:700;display:block}
+#check .done{margin-top:10px;padding-top:8px;border-top:1px solid var(--rule);font-weight:700}
+#check .done.good{color:var(--good)}
+#hint{position:absolute;left:12px;right:12px;top:12px;margin:0;background:var(--ink);color:var(--panel);padding:8px 12px;border-radius:7px;font-size:.95rem;opacity:0;pointer-events:none;transition:opacity .15s}
+#hint.show{opacity:1}
+.vx{position:relative;display:inline-block;font-family:var(--math);font-size:1.08em}
+.vx::after{content:"";position:absolute;left:18%;right:-8%;top:-.12em;height:.42em;background:currentColor;-webkit-mask:no-repeat center/100% 100% url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 8%27%3E%3Cpath d=%27M1 4H18M14 1.2L18.4 4L14 6.8%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.4%27 stroke-linecap=%27round%27/%3E%3C/svg%3E");mask:no-repeat center/100% 100% url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 8%27%3E%3Cpath d=%27M1 4H18M14 1.2L18.4 4L14 6.8%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.4%27 stroke-linecap=%27round%27/%3E%3C/svg%3E")}
+[data-f]{transition:opacity .12s}
+.dim{opacity:.18}
+body.story .build-only{display:none !important}
+body:not(.story) .story-only{display:none !important}
+@media (prefers-reduced-motion:reduce){[data-f],#hint{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Past, Present, and Future</h1>
+  <p class="lede">Each scenario is a snapshot of an object moving at <em>constant velocity</em>, but every snapshot is part of a longer story. <strong>Past:</strong> how did it get to its current motion? <strong>Present:</strong> what forces keep its velocity constant? <strong>Future:</strong> what would it take to change its velocity?</p>
+
+  <div class="bar">
+    <nav class="scn-row" aria-label="Scenario">
+      <button class="nav-btn" id="prev" aria-label="Previous scenario" title="Previous scenario">←</button>
+      <select id="scns" aria-label="Choose a scenario"></select>
+      <button class="nav-btn" id="next" aria-label="Next scenario" title="Next scenario">→</button>
+    </nav>
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="mode-build" aria-pressed="true">Build it myself</button>
+      <button id="mode-story" aria-pressed="false">Show me the story</button>
+    </div>
+  </div>
+
+  <p class="story-tip story-only">Press <strong>▶ Play</strong> or drag the slider to watch the whole story. Look for the pattern: when the forces are <strong>balanced</strong>, Σ<i class="vx">F</i> = 0 and the velocity stays the same. When they are <strong>unbalanced</strong>, Σ<i class="vx">F</i> points the same way as Δ<i class="vx">v</i>.</p>
+
+  <div class="top">
+    <section class="panel rep" aria-labelledby="desc-h">
+      <div class="rep-head"><h2 id="desc-h">Written Description</h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
+      <div class="rep-body"><p class="desc" id="desc"></p><p class="key" id="key"></p></div>
+      <p class="rep-hidden" hidden>Hidden. Write it from the other representations.</p>
+    </section>
+    <section class="panel rep" aria-labelledby="sk-h">
+      <div class="rep-head"><h2 id="sk-h">Sketch (the snapshot)</h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
+      <div class="rep-body"><svg id="sketch" viewBox="0 0 320 220" role="img" aria-label="Sketch of the situation"></svg></div>
+      <p class="rep-hidden" hidden>Hidden. Sketch it from the description.</p>
+    </section>
+    <section class="panel rep graph-rep" aria-labelledby="gr-h">
+      <div class="rep-head"><h2 id="gr-h">Story Graph: velocity vs. clock reading</h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
+      <div class="rep-body">
+        <svg id="graph" viewBox="0 0 490 240" role="img" aria-label="Velocity versus clock reading for the whole story"></svg>
+        <p class="note">The direction of motion in the snapshot is positive. <strong>The clock reading is not to scale:</strong> each part gets the same width here, but in real life some parts are very brief (a landing) and others last a long time. Click or drag on the graph to move the clock.</p>
+      </div>
+      <p class="rep-hidden" hidden>Hidden. Sketch the velocity vs. clock reading graph for all three parts.</p>
+    </section>
+  </div>
+
+  <section class="panel rep watch" aria-labelledby="w-h">
+    <div class="rep-head"><h2 id="w-h">Watch It Happen</h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
+    <div class="rep-body">
+      <div class="wstage">
+        <svg id="watch" viewBox="0 0 640 260" role="img" aria-label="Animation of the whole story: past, present and future"></svg>
+        <svg id="wvad" viewBox="0 0 240 240" role="img" aria-label="Vector addition diagram for this part of the story"></svg>
+      </div>
+      <div class="wctl">
+        <button class="play" id="w-play">▶ Play</button>
+        <button class="btn" id="w-reset" title="Back to the start of the story">⟲ Start</button>
+        <div class="wslide">
+          <input type="range" id="w-slider" min="0" max="300" step="1" value="150" aria-label="Clock reading: drag to move through the story">
+          <div class="wticks" aria-hidden="true"><span>PAST</span><span>PRESENT</span><span>FUTURE</span></div>
+        </div>
+        <span id="w-read" class="w-read" aria-live="off"></span>
+      </div>
+      <div class="wopts">
+        <label><input type="checkbox" id="w-trail" checked> Motion map dots (equal clock intervals)</label>
+        <label><input type="checkbox" id="w-vel" checked> Velocity arrow</label>
+        <label><input type="checkbox" id="w-forces"> Forces on the object</label>
+        <label><input type="checkbox" id="w-vad" checked> VAD for this part</label>
+      </div>
+      <p class="note"><strong>Not to scale in time:</strong> each part of the story plays for the same amount of time here. In real life, some parts are very brief (a landing, a cable snapping) and others last much longer.</p>
+    </div>
+    <p class="rep-hidden" hidden>Hidden. Predict the motion from the other representations.</p>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="Part of the story" id="tabs"></div>
+  <section class="panel phase" aria-live="polite">
+    <div class="ph-head"><h2 id="ph-h"></h2><span id="ph-pill" class="pill story-only"></span></div>
+    <p id="ph-desc"></p>
+    <div class="chain story-only" id="chain" aria-label="How the forces connect to the motion"></div>
+  </section>
+
+  <div class="work" style="margin-top:16px">
+    <div class="side">
+      <section class="panel rep" aria-labelledby="mm-h">
+        <div class="rep-head"><h2 id="mm-h">Motion Map and Δ<i class="vx">v</i></h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
+        <div class="rep-body"><svg id="mmap" viewBox="0 0 300 170" role="img" aria-label="Motion map with the change in velocity"></svg></div>
+        <p class="rep-hidden" hidden>Hidden. Draw the motion map and Δ<i class="vx">v</i> for this part of the story.</p>
+      </section>
+      <section class="panel rep" aria-labelledby="fbd-h">
+        <div class="rep-head"><h2 id="fbd-h">Free Body Diagram (FBD)</h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
+        <div class="rep-body">
+          <svg id="fbd" viewBox="-200 -200 400 400" role="group" aria-label="Free body diagram"></svg>
+          <p class="note build-only">Click a force to bring it to the vector addition diagram. Until then its arrow shows direction only; once it’s in the VAD, its length here matches the VAD.</p>
+          <ul class="force-key" id="force-key" aria-label="What each force label means"></ul>
+        </div>
+        <p class="rep-hidden" hidden>Hidden. Draw the FBD for this part of the story.</p>
+      </section>
+    </div>
+    <section class="panel" aria-labelledby="vad-h">
+      <div class="main-head">
+        <h2 id="vad-h">Force Vector Addition Diagram (VAD)</h2>
+        <div class="tools">
+          <label class="build-only"><input type="checkbox" id="rails"> Show lines of action</label>
+          <label class="build-only"><input type="checkbox" id="show-sum"> Show Σ<i class="vx">F</i> and Δ<i class="vx">v</i></label>
+          <button class="btn build-only" id="restart">Clear VAD</button>
+          <button class="btn build-only" id="anim-btn">Show Vector Addition Animation</button>
+        </div>
+      </div>
+      <p id="msg" aria-live="polite"></p>
+      <ul class="chips build-only" id="chips" aria-label="Forces: click to add or remove"></ul>
+      <div class="canvas-wrap">
+        <svg id="vad" aria-label="Vector addition diagram workspace"></svg>
+        <p id="hint" role="status" aria-live="polite"></p>
+      </div>
+      <button class="btn btn-check build-only" id="check-btn">Check my VAD</button>
+      <div id="check" class="build-only" aria-live="polite" hidden></div>
+    </section>
+  </div>
+</div>
+
+<script>
+const W_SQ = 4;          // grid squares for the object's weight (every VAD is drawn relative to the weight)
+const CLOSE_TOL = 0.25;  // grid units: a VAD this close to its start counts as ending where it started
+const DIR_TOL = 15;      // degrees: ΣF and Δv count as "the same direction" within this
+const PLAY_MS = 3400;    // story playback: time spent on each part
+const TWEEN_MS = 650;
+const TYPE_COL = { g:0, N:2, f:3, T:1, P:1, D:4 };
+const PH_NAME = ['PAST', 'PRESENT', 'FUTURE'], PH_SUB = ['How did it get here?', 'the snapshot', 'What would change it?'];
+
+/* Each scenario: the book's text, a key, the direction of motion in the snapshot (world degrees, y up),
+   the story graph (velocity at the start and end of each part; + = direction of motion), and three parts.
+   Each part lists its forces with direction (ang, world degrees) and size (mag, in units of the weight),
+   and dv: the direction of Δv (null when Δv = 0). The past and future stories are drafts for Richard to review. */
+const SCN = [
+  { name:'Hover puck', obj:'puck', move:180,
+    text:'A 0.9 kg hover puck glides to the left along the gym floor at a constant speed.',
+    key:'P = puck, F = floor, Y = you, E = Earth',
+    v:[[0,1],[1,1],[1,0]],
+    phases:[
+      { kind:'up', dv:180, desc:'The puck started at rest on the gym floor. You pushed it to the left with your hand until it left your hand gliding at its current speed. Its cushion of air keeps the friction from the floor small enough to ignore.',
+        forces:[{t:'g',on:'P',by:'E',ang:270,mag:1},{t:'N',on:'P',by:'F',ang:90,mag:1},{t:'P',on:'P',by:'Y',ang:180,mag:0.5}] },
+      { kind:'const', dv:null, desc:'Your hand has let go. The puck glides to the left on its cushion of air. Nothing pushes it forward, and friction from the floor is small enough to ignore.',
+        forces:[{t:'g',on:'P',by:'E',ang:270,mag:1},{t:'N',on:'P',by:'F',ang:90,mag:1}] },
+      { kind:'down', dv:0, desc:'The puck’s battery runs out and its cushion of air stops. Now the puck rubs on the gym floor, and friction slows it down until it stops.',
+        forces:[{t:'g',on:'P',by:'E',ang:270,mag:1},{t:'N',on:'P',by:'F',ang:90,mag:1},{t:'f',on:'P',by:'F',ang:0,mag:0.5}] } ] },
+  { name:'Wooden block pushed by a finger', obj:'block', move:0,
+    text:'Using a finger, a physics student pushes a 0.5 kg wooden block across a flat table with 3 N of horizontal force. The block moves to the right with a constant speed of 20 cm/s.',
+    key:'B = block, S = student, T = table, E = Earth',
+    v:[[0,1],[1,1],[1,0]],
+    phases:[
+      { kind:'up', dv:0, desc:'The block started at rest on the table. At first the student pushed harder than 3 N, harder than the friction from the table, so the block sped up to 20 cm/s.',
+        forces:[{t:'g',on:'B',by:'E',ang:270,mag:1},{t:'N',on:'B',by:'T',ang:90,mag:1},{t:'P',on:'B',by:'S',ang:0,mag:1.2},{t:'f',on:'B',by:'T',ang:180,mag:0.6}] },
+      { kind:'const', dv:null, desc:'The student pushes with 3 N, just enough to match the friction from the table, and the block slides to the right at a constant 20 cm/s.',
+        forces:[{t:'g',on:'B',by:'E',ang:270,mag:1},{t:'N',on:'B',by:'T',ang:90,mag:1},{t:'P',on:'B',by:'S',ang:0,mag:0.6},{t:'f',on:'B',by:'T',ang:180,mag:0.6}] },
+      { kind:'down', dv:180, desc:'The student lifts their finger off the block. Friction from the table is the only horizontal force left, and it slows the block down until it stops.',
+        forces:[{t:'g',on:'B',by:'E',ang:270,mag:1},{t:'N',on:'B',by:'T',ang:90,mag:1},{t:'f',on:'B',by:'T',ang:180,mag:0.6}] } ] },
+  { name:'Child on a moving sidewalk', obj:'child', move:0,
+    text:'In an airport, an 18 kg child stands on a moving sidewalk that carries him at a constant speed of 2 m/s.',
+    key:'C = child, S = moving sidewalk, F = floor, E = Earth',
+    v:[[0,1],[1,1],[1,0]],
+    phases:[
+      { kind:'up', dv:0, desc:'The child was standing still on the floor and stepped onto the moving sidewalk. Friction from the sidewalk on his feet sped him up until he moved along with it at 2 m/s.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'S',ang:90,mag:1},{t:'f',on:'C',by:'S',ang:0,mag:0.3}] },
+      { kind:'const', dv:null, desc:'The child stands still on the sidewalk and rides along with it at a constant 2 m/s. He isn’t speeding up or slowing down, so the sidewalk doesn’t need to push him forward.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'S',ang:90,mag:1}] },
+      { kind:'down', dv:180, desc:'At the end of the sidewalk, the child steps off onto the floor, which isn’t moving. Friction from the floor on his feet slows him down until he stops.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'F',ang:90,mag:1},{t:'f',on:'C',by:'F',ang:180,mag:0.3}] } ] },
+  { name:'Parachutist', obj:'parachutist', move:270,
+    text:'From a height of 1,000 feet, a 65 kg parachutist descends at a constant speed of 20 ft/s.',
+    key:'P = parachutist and parachute, A = air, G = ground, E = Earth',
+    v:[[3,1],[1,1],[1,0]],
+    phases:[
+      { kind:'down', dv:90, desc:'Before opening the parachute, the parachutist was falling much faster than 20 ft/s. When the parachute opened, the air pushed up much harder than Earth pulled down, and the parachutist slowed down to 20 ft/s.',
+        forces:[{t:'g',on:'P',by:'E',ang:270,mag:1},{t:'D',on:'P',by:'A',ang:90,mag:2}] },
+      { kind:'const', dv:null, desc:'With the parachute open, the parachutist falls at a constant 20 ft/s. The drag force from the air now matches Earth’s pull.',
+        forces:[{t:'g',on:'P',by:'E',ang:270,mag:1},{t:'D',on:'P',by:'A',ang:90,mag:1}] },
+      { kind:'down', dv:90, desc:'The parachutist lands. The ground pushes up on their feet and, together with the drag from the air, slows them down to a stop.',
+        forces:[{t:'g',on:'P',by:'E',ang:270,mag:1},{t:'D',on:'P',by:'A',ang:90,mag:0.6},{t:'N',on:'P',by:'G',ang:90,mag:0.9}] } ] },
+  { name:'Elevator lowered by a cable', obj:'elevator car', move:270,
+    text:'An elevator cable lowers a 1625 kg elevator car full of passengers at a constant speed of 1 m/s.',
+    key:'C = elevator car, L = cable, E = Earth',
+    v:[[0,1],[1,1],[1,0]],
+    phases:[
+      { kind:'up', dv:270, desc:'The elevator car started at rest at an upper floor. To get it moving down, the cable pulled up on the car less than Earth pulled down, so the car sped up to 1 m/s.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'T',on:'C',by:'L',ang:90,mag:0.8}] },
+      { kind:'const', dv:null, desc:'The car moves down at a constant 1 m/s. The cable pulls up exactly as hard as Earth pulls down.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'T',on:'C',by:'L',ang:90,mag:1}] },
+      { kind:'down', dv:90, desc:'Near the lobby, the cable pulls up harder than Earth pulls down, and the car slows down to a stop.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'T',on:'C',by:'L',ang:90,mag:1.2}] } ] },
+  { name:'Car towed up an icy hill', obj:'car', move:30,
+    text:'A truck tows a 955 kg car up a 30° icy hill at a constant speed of 30 mi/hr. The tow cable is parallel to the road, and friction on the car is small enough to ignore.',
+    key:'C = car, L = tow cable, K = truck, H = hill, E = Earth',
+    v:[[0,1],[1,1],[1,0]],
+    phases:[
+      { kind:'up', dv:30, desc:'The car started at rest at the bottom of the hill. The truck pulled the tow cable hard enough to speed the car up to 30 mi/hr.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'H',ang:120,mag:0.866},{t:'T',on:'C',by:'L',ang:30,mag:1}] },
+      { kind:'const', dv:null, desc:'The car moves up the icy hill at a constant 30 mi/hr. The tow cable pulls up the hill just hard enough to balance the part of Earth’s pull that acts down the hill.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'H',ang:120,mag:0.866},{t:'T',on:'C',by:'L',ang:30,mag:0.5}] },
+      { kind:'down', dv:210, desc:'The tow cable snaps! With nothing pulling it up the hill, the car slows down as it keeps rolling up the hill, until it stops for an instant, about to slide back down.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'H',ang:120,mag:0.866}] } ] }
+];
+
+const $ = s => document.querySelector(s);
+const vad = $('#vad'), fbd = $('#fbd');
+const st = { si:0, ph:1, mode:'build', builds:{}, rails:false, showSum:false, check:null, anim:null, tween:null, raf:0, T:1.5, playing:false, wTrail:true, wVel:true, wForces:false, wVad:true };
+let drag = null, snapPt = null, S = 40, CX = 0, CY = 0, lastTap = {}, hintTimer = null;
+
+const sc = () => SCN[st.si];
+const PH = () => sc().phases[st.ph];
+const F = i => PH().forces[i];
+const story = () => st.mode === 'story';
+const known = f => f.t === 'g';
+const fcol = f => `var(--f${TYPE_COL[f.t]})`;
+const dirA = a => { a = a*Math.PI/180; return [Math.cos(a), Math.sin(a)]; };
+const dir = f => dirA(f.ang);
+const sub = f => f.t + f.on + f.by;
+const fkey = f => f.t + '@' + f.ang;
+const tipOf = p => { const u = dir(p.f); return [p.x+u[0]*p.len, p.y+u[1]*p.len]; };
+const P = (x,y) => [CX + x*S, CY - y*S];
+const dist = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
+const r1 = n => (+n).toFixed(1);
+const balanced = () => PH().dv == null;
+const angOf = v => (Math.atan2(v[1], v[0])*180/Math.PI + 360) % 360;
+const angDiff = (a, b) => { const d = Math.abs(((a - b) % 360 + 360) % 360); return Math.min(d, 360 - d); };
+
+const svgLabel = (f,x,y,anchor,size,col) =>
+  `<text class="lbl"${col?` style="fill:${col}"`:''} x="${r1(x)}" y="${r1(y)}" text-anchor="${anchor}" dominant-baseline="middle" font-size="${size}"><tspan font-style="italic">F</tspan><tspan dy="0.32em" font-size="68%">${sub(f)}</tspan></text>`;
+const mctx = document.createElement('canvas').getContext('2d');
+const MATH = '"STIX Two Text","Cambria Math","Times New Roman",serif', BODY = '"Atkinson Hyperlegible",system-ui,sans-serif';
+const tw = (font, str) => { mctx.font = font; return mctx.measureText(str).width; };
+const htmlLabel = f => `<span class="flbl"><i>F</i><sub>${sub(f)}</sub></span>`;
+
+/* ---------- arrows: the `wright vector` style (stroked, curled `>` tip at 60%) ---------- */
+const HEAD_SCALE = 0.6;
+function headDims(L, w){
+  let hl = 7*w*HEAD_SCALE, hw = 2.5*w*HEAD_SCALE;
+  const k = Math.min(1, (L*0.6)/hl);
+  return [hl*k, hw*k];
+}
+function arrow(x1,y1,x2,y2,color,w){
+  const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L;
+  const [hl, hw] = headDims(L, w);
+  const tx=x2-ux*w/2, ty=y2-uy*w/2, sx=x1+ux*w/2, sy=y1+uy*w/2;
+  return `<line x1="${r1(sx)}" y1="${r1(sy)}" x2="${r1(tx)}" y2="${r1(ty)}" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/>`+
+    barbs(tx, ty, ux, uy, hl, hw, color, w);
+}
+function barbs(tx, ty, ux, uy, hl, hw, color, w){
+  const nx=-uy, ny=ux;
+  const pt=(a,b)=>`${r1(tx+ux*a*hl+nx*b*hw)},${r1(ty+uy*a*hl+ny*b*hw)}`;
+  const barb=sd=>`M${pt(-1,sd)} C${pt(-0.81,0.6*sd)} ${pt(-0.3,0.2*sd)} ${r1(tx)},${r1(ty)}`;
+  return `<path d="${barb(1)} ${barb(-1)}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+// Δv arrows use a filled TikZ -stealth tip so they read differently from the open-barbed velocity arrows.
+function stealthArrow(x1,y1,x2,y2,color,w){
+  const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L, nx=-uy, ny=ux;
+  const hl=Math.min(L*0.6, 4.5*w), hw=2*w, b=[x2-ux*hl, y2-uy*hl], inner=[x2-ux*hl*0.7, y2-uy*hl*0.7];
+  return `<line x1="${r1(x1)}" y1="${r1(y1)}" x2="${r1(inner[0])}" y2="${r1(inner[1])}" stroke="${color}" stroke-width="${w}" stroke-linecap="round"/>`+
+    `<path d="M${r1(x2)},${r1(y2)} L${r1(b[0]+nx*hw)},${r1(b[1]+ny*hw)} L${r1(inner[0])},${r1(inner[1])} L${r1(b[0]-nx*hw)},${r1(b[1]-ny*hw)}Z" fill="${color}" stroke="${color}" stroke-width="1" stroke-linejoin="round"/>`;
+}
+// Math text with optional vector arrows: parts = [{t, vec?, it?}].
+function mathText(x, y, parts, anchor='middle', fs=15, col='var(--ink)'){
+  const fnt = it => `${it ? 'italic ' : ''}500 ${fs}px ${MATH}`;
+  const widths = parts.map(q => tw(fnt(q.it), q.t)), total = widths.reduce((a,b)=>a+b,0);
+  let cx = x - (anchor === 'middle' ? total/2 : anchor === 'end' ? total : 0), out = '';
+  parts.forEach((q, k) => {
+    out += `<text class="sk-math" xml:space="preserve" x="${r1(cx)}" y="${r1(y)}"${q.it ? ' font-style="italic"' : ''} font-size="${fs}" style="fill:${col}">${q.t}</text>`;
+    if (q.vec) {
+      const x0 = cx + widths[k]*0.12, x1 = cx + widths[k]*0.98 + 1.5, ya = y - fs*0.78;
+      out += `<line x1="${r1(x0)}" y1="${r1(ya)}" x2="${r1(x1)}" y2="${r1(ya)}" stroke="${col}" stroke-width="1.1" stroke-linecap="round"/>`+
+        barbs(x1, ya, 1, 0, 3.6, 2.1, col, 1.1);
+    }
+    cx += widths[k];
+  });
+  return out;
+}
+const mathW = (parts, fs=15) => parts.reduce((s,q) => s + tw(`${q.it ? 'italic ' : ''}500 ${fs}px ${MATH}`, q.t), 0);
+const V = { t:'v', it:true, vec:true }, DV = [{t:'Δ'}, V], SUMF = [{t:'Σ'}, {t:'F', it:true, vec:true}];
+
+/* ---------- label placement (shared with the other sims) ---------- */
+function makePlacer(segs, blobs, bounds, cen, boxes = []){
+  const segHitsRect = (sg, r) => {
+    const [x1,y1] = sg[0], [x2,y2] = sg[1], dx = x2-x1, dy = y2-y1;
+    let t0 = 0, t1 = 1;
+    const P4 = [-dx, dx, -dy, dy], Q4 = [x1-r.x0, r.x1-x1, y1-r.y0, r.y1-y1];
+    for (let i = 0; i < 4; i++) {
+      if (P4[i] === 0) { if (Q4[i] < 0) return false; continue; }
+      const t = Q4[i]/P4[i];
+      if (P4[i] < 0) { if (t > t1) return false; if (t > t0) t0 = t; }
+      else { if (t < t0) return false; if (t < t1) t1 = t; }
+    }
+    return true;
+  };
+  const overlap = (r, q) => Math.max(0, Math.min(r.x1,q.x1)-Math.max(r.x0,q.x0)) * Math.max(0, Math.min(r.y1,q.y1)-Math.max(r.y0,q.y0));
+  const cost = r => {
+    const pad = { x0:r.x0-3, y0:r.y0-3, x1:r.x1+3, y1:r.y1+3 };
+    let c = 0;
+    for (const sg of segs) if (segHitsRect(sg, pad)) c += 1000;
+    for (const q of boxes) { const o = overlap({ x0:r.x0-6, y0:r.y0-6, x1:r.x1+6, y1:r.y1+6 }, q); if (o > 0) c += 3000 + o*40; }
+    for (const [bx,by,br] of blobs) {
+      const nx = Math.max(r.x0, Math.min(bx, r.x1)), ny = Math.max(r.y0, Math.min(by, r.y1));
+      if (Math.hypot(nx-bx, ny-by) < br) c += 600;
+    }
+    if (r.x0 < bounds.x0 || r.y0 < bounds.y0 || r.x1 > bounds.x1 || r.y1 > bounds.y1) c += 800;
+    return c;
+  };
+  function besideSegment(a, b, w, hh){
+    const L = Math.hypot(b[0]-a[0], b[1]-a[1]) || 1, ux = (b[0]-a[0])/L, uy = (b[1]-a[1])/L;
+    const nx = -uy, ny = ux, mid = [(a[0]+b[0])/2, (a[1]+b[1])/2];
+    const pref = ((mid[0]-cen[0])*nx + (mid[1]-cen[1])*ny) >= 0 ? 1 : -1;
+    const out = [];
+    for (const side of [pref, -pref])
+      for (const t of [0.5, 0.38, 0.62, 0.25, 0.75, 0.12, 0.88])
+        for (const off of [8, 20, 34, 52, 76]) {
+          const ext = Math.abs(nx)*w/2 + Math.abs(ny)*hh/2;
+          out.push({ cx:a[0]+ux*L*t + nx*side*(off+ext), cy:a[1]+uy*L*t + ny*side*(off+ext), pen:(side===pref?0:40) + Math.abs(t-0.5)*60 + off });
+        }
+    return out;
+  }
+  function aroundPoint(c, w, hh, d){
+    const out = [];
+    for (const dd of [d, d+24, d+50])
+      for (let k = 0; k < 8; k++) {
+        const ang = -Math.PI/4 + k*Math.PI/4, dx = Math.cos(ang), dy = Math.sin(ang);
+        const away = (dx*(c[0]-cen[0]) + dy*(c[1]-cen[1])) >= 0 ? 0 : 30;
+        out.push({ cx:c[0]+dx*(dd+Math.abs(dx)*w/2), cy:c[1]+dy*(dd+Math.abs(dy)*hh/2), pen:away + k + (dd-d) });
+      }
+    return out;
+  }
+  function place(cands, w, hh){
+    let best = null, bc = Infinity;
+    for (const c of cands) {
+      const r = { x0:c.cx-w/2, y0:c.cy-hh/2, x1:c.cx+w/2, y1:c.cy+hh/2 };
+      const v = cost(r) + c.pen;
+      if (v < bc) { bc = v; best = r; }
+    }
+    boxes.push(best);
+    return best;
+  }
+  return { place, besideSegment, aroundPoint, boxes };
+}
+
+/* ---------- sketches (Etkina style, the present snapshot) ---------- */
+const skT = (x,y,t,cls='sk-lbl',anchor='middle') => `<text class="${cls}" x="${x}" y="${y}" text-anchor="${anchor}">${t}</text>`;
+function hatch(x1,x2,y){ let d=`M${x1},${y}H${x2}`; for (let x=x1+6; x<=x2; x+=12) d+=`M${x},${y}l-7,8`; return `<path class="sk-hatch" d="${d}"/><path class="sk" d="M${x1},${y}H${x2}"/>`; }
+function vhatch(x,y1,y2,side){ let d=''; for (let y=y1+6; y<=y2; y+=12) d+=`M${x},${y}l${side*8},-7`; return `<path class="sk-hatch" d="${d}"/><path class="sk" d="M${x},${y1}V${y2}"/>`; }
+function skArc(cx,cy,r,a0,a1,lab,lr){
+  const R=a=>a*Math.PI/180, p0=[cx+r*Math.cos(R(a0)),cy+r*Math.sin(R(a0))], p1=[cx+r*Math.cos(R(a1)),cy+r*Math.sin(R(a1))], am=R((a0+a1)/2);
+  return `<path class="sk-ref" style="stroke-dasharray:none" d="M${r1(p0[0])},${r1(p0[1])} A${r},${r} 0 0 ${a1>a0?1:0} ${r1(p1[0])},${r1(p1[1])}"/>`+
+    skT(r1(cx+lr*Math.cos(am)), r1(cy+lr*Math.sin(am)+4), lab, 'sk-note');
+}
+// Flat hand pushing to the left with the fingertips at (x, y). The forearm tapers up to the right.
+const handFlat = (x, y) => `<g transform="translate(${r1(x+3)},${r1(y)})">`+
+  `<path class="sk sk-fill" d="M38,-8 Q60,-28 84,-56 L96,-46 Q70,-20 46,4Z"/><path class="sk" d="M80,-51 L91,-41"/>`+
+  `<path class="sk sk-fill" d="M2,-7 L28,-9 Q38,-10 42,-4 L44,4 Q40,10 32,9 Q28,15 20,13 Q16,12 18,8 L2,7 Q-3,7 -3,0 Q-3,-7 2,-7Z"/>`+
+  `<path class="sk" style="stroke-width:1.2" d="M3,-2.4 H22 M3,2.4 H19"/></g>`;
+// Fist with the index finger pointing right; fingertip at (x, y). The forearm rises to the left.
+const handPoint = (x, y) => `<g transform="translate(${r1(x)},${r1(y)})">`+
+  `<path class="sk sk-fill" d="M-50,-10 Q-70,-30 -92,-54 L-104,-44 Q-82,-20 -60,4Z"/><path class="sk" d="M-88,-50 L-99,-39"/>`+
+  `<path class="sk sk-fill" d="M-30,-4.5 L-3,-4.5 Q1.5,-4.5 1.5,0 Q1.5,4.5 -3,4.5 L-25,4.5 Q-22,9 -27,11.5 Q-24,16 -31,18 Q-30,22 -38,22 L-50,20 Q-60,18 -60,6 L-60,-2 Q-58,-12 -48,-12 L-36,-9 Q-30,-8 -30,-4.5Z"/>`+
+  `<path class="sk" style="stroke-width:1.4" d="M-48,-7 Q-40,-5 -31,-1.5 M-27,11.5 Q-31,10 -33,7 M-31,18 Q-35,17 -37,13"/></g>`;
+const sysBox = (x, y, w, h) => `<rect class="sk-sys" x="${x}" y="${y}" width="${w}" height="${h}" rx="7"/>`;
+function person(x, ground, hand){
+  return `<circle class="sk sk-fill" cx="${x}" cy="${ground-127}" r="9"/>`+
+    `<path class="sk" d="M${x},${ground-118}V${ground-62} M${x},${ground-62}L${x-10},${ground} M${x},${ground-62}L${x+10},${ground} M${x},${ground-108}L${hand[0]},${hand[1]}"/>`;
+}
+const SKETCH = [
+  // Hover puck gliding on the gym floor
+  () => hatch(10,310,172) +
+    `<path class="sk sk-fill" d="M104,164 L104,146 Q104,128 124,128 L196,128 Q216,128 216,146 L216,164 Z"/>`+
+    `<path class="sk-hatch" d="M118,169 q5,-3.5 10,0 M140,169 q5,-3.5 10,0 M162,169 q5,-3.5 10,0 M184,169 q5,-3.5 10,0"/>`+
+    sysBox(96,120,128,52) +
+    skT(160,152,'Hover puck (P)') + skT(230,160,'cushion of air','sk-note','start') +
+    skT(14,192,'Gym floor (F)','sk-lbl','start') + skT(306,212,'Earth (E)','sk-lbl','end'),
+  // Wooden block pushed by a finger
+  () => hatch(10,310,200) +
+    `<path class="sk sk-fill" d="M30,150h260v10h-260z"/><path class="sk" d="M44,160v40 M276,160v40"/>`+
+    `<rect class="sk sk-fill" x="150" y="112" width="56" height="38" rx="2"/>`+
+    handPoint(150, 131) +
+    sysBox(143,105,70,45) +
+    skT(178,135,'Block (B)') + skT(14,74,'Student (S)','sk-lbl','start') + skT(124,120,'3 N','sk-note') +
+    skT(236,180,'Table (T)') + skT(306,218,'Earth (E)','sk-lbl','end'),
+  // Child on a moving sidewalk
+  () => hatch(10,62,180) + hatch(258,310,180) +
+    `<rect class="sk sk-fill" x="62" y="168" width="196" height="14" rx="7"/>`+
+    `<circle class="sk" cx="69" cy="175" r="4"/><circle class="sk" cx="251" cy="175" r="4"/>`+
+    person(160,168,[170,98]) +
+    sysBox(146,27,30,141) +
+    skT(182,90,'Child (C)','sk-lbl','start') + skT(160,200,'Moving sidewalk (S)') +
+    skT(14,198,'Floor (F)','sk-lbl','start') + skT(306,214,'Earth (E)','sk-lbl','end'),
+  // Parachutist
+  () => `<path class="sk sk-fill" d="M112,58 Q160,4 208,58 Q184,50 160,52 Q136,50 112,58Z"/>`+
+    `<path class="sk" d="M112,58L155,92 M138,52L157,92 M182,52L163,92 M208,58L165,92"/>`+
+    person(160,205,[148,124]) +
+    sysBox(104,8,112,197) +
+    skT(98,120,'Parachutist (P)','sk-lbl','end') + skT(98,136,'with parachute','sk-note','end') +
+    skT(226,40,'Air (A)','sk-lbl','start') + skT(226,150,'1,000 ft above','sk-note','start') + skT(226,164,'the ground (G)','sk-note','start') +
+    skT(306,214,'Earth (E)','sk-lbl','end'),
+  // Elevator lowered by a cable
+  () => vhatch(96,10,210,-1) + vhatch(224,10,210,1) +
+    `<path class="sk" d="M160,22V104"/><circle class="sk sk-fill" cx="160" cy="22" r="10"/>`+
+    `<rect class="sk sk-fill" x="124" y="104" width="72" height="80" rx="2"/>`+
+    sysBox(117,97,86,94) +
+    skT(160,140,'Elevator') + skT(160,156,'car (C)') + skT(166,66,'Cable (L)','sk-lbl','start') +
+    skT(306,214,'Earth (E)','sk-lbl','end'),
+  // Car towed up a 30° icy hill
+  () => hatch(10,310,195) +
+    `<path class="sk sk-fill" d="M20,195L300,195L300,33.3Z"/>`+
+    `<g transform="translate(122.2,136) rotate(-30)">`+
+      `<path class="sk" d="M26,-14H92"/>`+
+      `<rect class="sk sk-fill" x="-26" y="-22" width="52" height="14" rx="3"/><path class="sk sk-fill" d="M-14,-22 L-9,-32 L10,-32 L16,-22Z"/>`+
+      `<circle class="sk sk-fill" cx="-15" cy="-5" r="5"/><circle class="sk sk-fill" cx="15" cy="-5" r="5"/>`+
+      `<rect class="sk sk-fill" x="92" y="-30" width="44" height="22" rx="2"/><rect class="sk sk-fill" x="136" y="-26" width="18" height="18" rx="3"/>`+
+      `<circle class="sk sk-fill" cx="102" cy="-5" r="5"/><circle class="sk sk-fill" cx="144" cy="-5" r="5"/>`+
+      `<rect class="sk-sys" x="-33" y="-40" width="66" height="40" rx="7"/>`+
+    `</g>`+
+    skArc(20,195,40,-30,0,'30°',56) +
+    skT(96,100,'Car (C)','sk-lbl','end') + skT(165,78,'Tow cable (L)','sk-lbl','end') + skT(226,30,'Truck (K)') +
+    skT(236,182,'Icy hill (H)') + skT(306,214,'Earth (E)','sk-lbl','end')
+];
+function renderSketch(){ $('#sketch').innerHTML = SKETCH[st.si](); }
+
+/* ---------- story graph: velocity vs. clock reading ---------- */
+const GX0 = 40, GX1 = 412, GY0 = 30, GY1 = 196;
+function graphScale(){
+  const all = sc().v.flat(), top = Math.max(...all)*1.18, bot = Math.min(0, ...all) < 0 ? Math.min(...all)*1.25 : 0;
+  return { x:t => GX0 + t/3*(GX1-GX0), y:v => GY0 + (top - v)/(top - bot)*(GY1-GY0) };
+}
+function renderGraph(){
+  const { x, y } = graphScale(), v = sc().v, y0 = y(0);
+  let h = `<rect class="g-shade" x="${r1(x(st.ph))}" y="${GY0-14}" width="${r1(x(1)-x(0))}" height="${GY1-GY0+14}"/>`;
+  h += `<line class="g-div" x1="${r1(x(1))}" y1="${GY0-14}" x2="${r1(x(1))}" y2="${GY1}"/><line class="g-div" x1="${r1(x(2))}" y1="${GY0-14}" x2="${r1(x(2))}" y2="${GY1}"/>`;
+  h += `<path class="g-axis" d="M${GX0},${GY1}V${GY0-16}"/>` + barbs(GX0, GY0-16, 0, -1, 7, 4, 'var(--ink)', 1.6);
+  h += `<path class="g-axis" d="M${GX0},${r1(y0)}H${GX1+12}"/>` + barbs(GX1+12, y0, 1, 0, 7, 4, 'var(--ink)', 1.6);
+  h += `<text class="g-lbl" x="${GX0+6}" y="${GY0-16}">velocity</text>`;
+  h += `<text class="g-lbl" x="${GX1+22}" y="${r1(y0-3)}">clock</text><text class="g-lbl" x="${GX1+22}" y="${r1(y0+12)}">reading</text>`;
+  const pts = []; v.forEach((s, k) => { pts.push([x(k), y(s[0])], [x(k+1), y(s[1])]); });
+  h += `<path class="g-curve" d="M${pts.map(p => r1(p[0])+','+r1(p[1])).join(' L')}"/>`;
+  const c = v[st.ph];
+  h += `<line class="g-cur" x1="${r1(x(st.ph))}" y1="${r1(y(c[0]))}" x2="${r1(x(st.ph+1))}" y2="${r1(y(c[1]))}"/>`;
+  PH_NAME.forEach((n, k) => { h += `<text class="g-ph${k===st.ph?' on':''}" x="${r1(x(k+0.5))}" y="${GY1+22}" text-anchor="middle">${n}</text>`; });
+  // the clock: where the animation is in the story
+  h += `<line x1="${r1(x(st.T))}" y1="${GY0-14}" x2="${r1(x(st.T))}" y2="${GY1}" stroke="var(--ink)" stroke-width="1.5"/><circle cx="${r1(x(st.T))}" cy="${r1(y(vAt(st.T)))}" r="5.5" fill="var(--dv)" stroke="var(--panel)" stroke-width="2"/>`;
+  $('#graph').innerHTML = h;
+}
+
+/* ---------- watch it happen: an animation of the whole story ----------
+   st.T is the clock (0–3: past, present, future). Velocity follows the story graph; position is its integral.
+   Each scene maps position x to the object's center (ctr) and draws the moving scene at clock reading T. */
+function vAt(T){ const v = sc().v, k = Math.min(2, Math.floor(T)), f = T - k; return v[k][0] + (v[k][1]-v[k][0])*f; }
+function posAt(T){
+  const v = sc().v; let x = 0;
+  for (let k = 0; k < 3; k++) { const a = Math.max(0, Math.min(1, T - k)); if (a <= 0) break; x += v[k][0]*a + (v[k][1]-v[k][0])*a*a/2; }
+  return x;
+}
+const slopeP = s => [20 + s*0.866, 250 - s*0.5];
+const WATCH = [
+  // Hover puck: your hand pushes it in the past, then stays where it let go; the air cushion stops in the future
+  { e:[-1,0], vb:'0 76 640 164', ctr:x => [560-230*x, 186],
+    draw(T, x){
+      const cx = 560-230*x, air = T < 2, b = air ? 196 : 200;
+      const hx = T < 1 ? cx+36 : 560-230*posAt(1)+36 + Math.min(1, (T-1)*3)*30;
+      let h = hatch(0,640,200) + skT(14,222,'Gym floor (F)','sk-lbl','start');
+      h += handFlat(hx, b-12) + skT(r1(Math.min(636, hx+104)), b-72, 'You (Y)', 'sk-note', hx+150 > 636 ? 'end' : 'start');
+      h += `<path class="sk sk-fill" d="M${r1(cx-36)},${b} L${r1(cx-36)},${b-12} Q${r1(cx-36)},${b-24} ${r1(cx-22)},${b-24} L${r1(cx+22)},${b-24} Q${r1(cx+36)},${b-24} ${r1(cx+36)},${b-12} L${r1(cx+36)},${b} Z"/>`;
+      if (air) h += `<path class="sk-hatch" d="M${r1(cx-28)},199 q4,-3 8,0 M${r1(cx-8)},199 q4,-3 8,0 M${r1(cx+12)},199 q4,-3 8,0"/>`;
+      else h += skT(r1(cx), 172, 'air off', 'sk-note');
+      return h;
+    } },
+  // Block: the finger pushes through the past and present, then stops and lifts off in the future
+  { e:[1,0], vb:'0 34 640 216', ctr:x => [170+190*x, 150],
+    draw(T, x){
+      const cx = 170+190*x, fx = T < 2 ? cx-25 : 170+190*posAt(2)-25, lift = T < 2 ? 0 : Math.min(1, (T-2)*4)*26;
+      let h = hatch(0,640,240) + `<path class="sk sk-fill" d="M20,170h600v10h-600z"/><path class="sk" d="M40,180v60 M600,180v60"/>` + skT(320,204,'Table (T)');
+      h += `<rect class="sk sk-fill" x="${r1(cx-25)}" y="130" width="50" height="40" rx="2"/>`;
+      h += handPoint(fx, 150-lift);
+      const lx = fx-110;
+      h += skT(r1(Math.max(8, lx)), r1(88-lift), 'Student (S)', 'sk-note', lx < 40 ? 'start' : 'middle');
+      return h;
+    } },
+  // Child: steps onto the moving sidewalk, rides it, steps off onto the floor
+  { e:[1,0], vb:'0 40 640 190', ctr:x => [150+180*x, 150],
+    draw(T, x){
+      const cx = 150+180*x, off = (T*180) % 28;
+      let h = hatch(0,140,188) + hatch(420,640,188) + `<rect class="sk sk-fill" x="140" y="188" width="280" height="12" rx="6"/>`;
+      let m = ''; for (let xm = 146 + off; xm < 414; xm += 28) m += `M${r1(xm)},191V197`;
+      h += `<path class="sk-hatch" d="${m}"/><circle class="sk" cx="147" cy="194" r="3.5"/><circle class="sk" cx="413" cy="194" r="3.5"/>`;
+      h += skT(280,218,'Moving sidewalk (S)') + skT(70,218,'Floor (F)') + skT(530,218,'Floor (F)');
+      h += `<circle class="sk sk-fill" cx="${r1(cx)}" cy="118" r="8"/><path class="sk" d="M${r1(cx)},126V158 M${r1(cx)},158L${r1(cx-8)},188 M${r1(cx)},158L${r1(cx+8)},188 M${r1(cx)},134L${r1(cx-9)},156 M${r1(cx)},134L${r1(cx+9)},156"/>`;
+      return h;
+    } },
+  // Parachutist: the parachute opens at the start of the past; lands at the end of the future
+  { e:[0,1], vb:'0 -40 640 300', ctr:x => [320, 110+38*x-32],
+    draw(T, x){
+      const cx = 320, fy = 110+38*x, s = Math.min(1, 0.35 + T/0.3*0.65), w = 48*s, hg = 40*s, base = fy-50;
+      let h = hatch(0,640,244) + skT(14,236,'Ground (G)','sk-lbl','start') + skT(630,-22,'not to scale','sk-note','end');
+      h += `<g transform="translate(${cx},${r1(fy)}) scale(1.6) translate(${-cx},${r1(-fy)})">`;
+      h += `<path class="sk sk-fill" d="M${r1(cx-w)},${r1(base)} Q${cx},${r1(base-2*hg)} ${r1(cx+w)},${r1(base)} Q${cx},${r1(base-6)} ${r1(cx-w)},${r1(base)}Z"/>`;
+      h += `<path class="sk" style="stroke-width:1.4" d="M${r1(cx-w)},${r1(base)}L${cx-4},${r1(fy-30)} M${r1(cx+w)},${r1(base)}L${cx+4},${r1(fy-30)} M${r1(cx-w*0.4)},${r1(base-3)}L${cx-3},${r1(fy-30)} M${r1(cx+w*0.4)},${r1(base-3)}L${cx+3},${r1(fy-30)}"/>`;
+      h += `<circle class="sk sk-fill" cx="${cx}" cy="${r1(fy-36)}" r="6"/><path class="sk" d="M${cx},${r1(fy-30)}V${r1(fy-12)} M${cx},${r1(fy-12)}L${cx-6},${r1(fy)} M${cx},${r1(fy-12)}L${cx+6},${r1(fy)} M${cx},${r1(fy-27)}L${cx-8},${r1(fy-36)} M${cx},${r1(fy-27)}L${cx+8},${r1(fy-36)}"/></g>`;
+      return h;
+    } },
+  // Elevator: starts at floor 4, cruises down, stops at the lobby
+  { e:[0,1], vb:'0 0 640 260', ctr:x => [320, 22+82*x+28],
+    draw(T, x){
+      const ty = 22+82*x;
+      let h = vhatch(280,0,244,-1) + vhatch(360,0,244,1) + `<path class="sk" d="M280,244H360"/>`;
+      [[242,'Lobby'],[187,'Floor 2'],[132,'Floor 3'],[78,'Floor 4']].forEach(([y, l]) => { h += `<path class="sk" d="M226,${y}H272"/>` + skT(222, y+4, l, 'sk-note', 'end'); });
+      h += `<path class="sk" d="M320,12V${r1(ty)}"/><circle class="sk sk-fill" cx="320" cy="12" r="9"/>`;
+      h += `<rect class="sk sk-fill" x="290" y="${r1(ty)}" width="60" height="56" rx="2"/>`;
+      h += `<circle class="sk" cx="308" cy="${r1(ty+20)}" r="5"/><circle class="sk" cx="332" cy="${r1(ty+20)}" r="5"/><path class="sk" d="M308,${r1(ty+25)}V${r1(ty+44)} M332,${r1(ty+25)}V${r1(ty+44)}"/>`;
+      h += skT(372, 30, 'Cable (L)', 'sk-note', 'start');
+      return h;
+    } },
+  // Car: towed up the icy hill; in the future the cable snaps and the truck drives on without it
+  { e:[0.866,-0.5], vb:'0 -50 640 310', ctr:x => { const q = slopeP(110+160*x); return [q[0]-7, q[1]-12]; },
+    draw(T, x){
+      const sc_ = 110+160*x, sT = T < 2 ? sc_+105 : 110+160*posAt(2)+105+160*(T-2), pc = slopeP(sc_), pt = slopeP(sT);
+      let h = `<path class="sk sk-fill" d="M20,250L640,250L640,-108Z"/>` + hatch(0,640,250) + skArc(20,250,40,-30,0,'30°',56) + skT(520,238,'Icy hill (H)');
+      h += `<g transform="translate(${r1(pc[0])},${r1(pc[1])}) rotate(-30)">`+
+        (T < 2 ? `<path class="sk" d="M26,-14H${r1(sT-sc_-22)}"/>` : `<path class="sk" d="M26,-14 q8,1 10,9"/>`)+
+        `<rect class="sk sk-fill" x="-26" y="-22" width="52" height="14" rx="3"/><path class="sk sk-fill" d="M-14,-22 L-9,-32 L10,-32 L16,-22Z"/>`+
+        `<circle class="sk sk-fill" cx="-15" cy="-5" r="5"/><circle class="sk sk-fill" cx="15" cy="-5" r="5"/></g>`;
+      h += `<g transform="translate(${r1(pt[0])},${r1(pt[1])}) rotate(-30)">`+
+        (T < 2 ? '' : `<path class="sk" d="M-22,-14 q-8,1 -10,9"/>`)+
+        `<rect class="sk sk-fill" x="-22" y="-30" width="44" height="22" rx="2"/><rect class="sk sk-fill" x="22" y="-26" width="18" height="18" rx="3"/>`+
+        `<circle class="sk sk-fill" cx="-12" cy="-5" r="5"/><circle class="sk sk-fill" cx="30" cy="-5" r="5"/></g>`;
+      if (T >= 2 && T < 2.5) h += skT(r1((pc[0]+pt[0])/2 - 10), r1((pc[1]+pt[1])/2 - 34), 'snap!', 'sk-note');
+      return h;
+    } }
+];
+function renderWatch(){
+  const W = WATCH[st.si], T = st.T, x = posAt(T), c = W.ctr(x), e = W.e, ph = sc().phases[Math.min(2, Math.floor(T))];
+  let h = W.draw(T, x);
+  if (st.wTrail) for (let k = 0; k*0.2 <= T + 1e-6; k++) { const q = W.ctr(posAt(k*0.2)); h += `<circle cx="${r1(q[0])}" cy="${r1(q[1])}" r="3.6" fill="var(--ink)" opacity="0.7"/>`; }
+  if (st.wForces) {
+    const groups = {}; ph.forces.forEach((f, i) => (groups[f.ang] ||= []).push(i));
+    ph.forces.forEach((f, i) => {
+      const u = dir(f), g = groups[f.ang], off = (g.indexOf(i) - (g.length-1)/2)*9, n = [-u[1]*off, -u[0]*off];
+      const t = [c[0]+n[0], c[1]+n[1]], L = f.mag*42, tp = [t[0]+u[0]*L, t[1]-u[1]*L];
+      h += arrow(t[0], t[1], tp[0], tp[1], fcol(f), 3) + svgLabel(f, tp[0]+u[0]*16 + Math.sign(off)*14, tp[1]-u[1]*14, 'middle', 14, fcol(f));
+    });
+    h += `<circle cx="${r1(c[0])}" cy="${r1(c[1])}" r="4.5" fill="var(--ink)"/>`;
+  }
+  const v = vAt(T);
+  if (st.wVel && Math.abs(v) > 0.03) {
+    const up = Math.abs(e[0]) < 0.2 ? [1, 0] : [ -Math.abs(e[1])*Math.sign(e[0]) , -Math.abs(e[0]) ];
+    const d = st.wForces ? 80 : 36, s0 = [c[0]+up[0]*d, c[1]+up[1]*d], L = v*(st.si === 3 ? 30 : 46), s1 = [s0[0]+e[0]*L, s0[1]+e[1]*L];
+    h += arrow(s0[0], s0[1], s1[0], s1[1], 'var(--vel)', 3.2) + mathText((s0[0]+s1[0])/2 + up[0]*14, (s0[1]+s1[1])/2 + up[1]*14 + 5, [V], 'middle', 15);
+  }
+  $('#watch').setAttribute('viewBox', W.vb);
+  $('#watch').innerHTML = h;
+  renderWatchVAD();
+  // describe the motion at this instant from the actual velocity
+  const seg = sc().v[Math.min(2, Math.floor(T))], dvs = seg[1] - seg[0];
+  const word = Math.abs(v) < 0.03 ? (T > 0.05 && T < 2.95 ? 'at rest for an instant' : 'at rest') : dvs === 0 ? 'constant velocity' : v*dvs > 0 ? 'speeding up' : 'slowing down';
+  $('#w-read').textContent = `${PH_NAME[Math.min(2, Math.floor(T))]}: ${word}${v < -0.03 ? ', moving backward' : ''}`;
+  $('#w-slider').value = Math.round(T*100);
+}
+function setT(T){
+  st.T = Math.max(0, Math.min(3, T));
+  const ph = Math.min(2, Math.floor(st.T));
+  if (ph !== st.ph) goPhase(ph);
+  renderWatch(); renderGraph();
+}
+
+/* Small VAD beside the animation, for the part of the story the clock is in. Show me the story: the worked VAD
+   (tweening between parts). Build it myself: the student's own VAD for that part, never the answer. */
+function renderWatchVAD(){
+  const el = $('#wvad');
+  el.hidden = !st.wVad; if (!st.wVad) return;
+  const pm = placed(), arr = [...pm.values()].filter(p => p.len > 0.02);
+  let h = `<text class="wv-t" x="10" y="20">VAD: ${PH_NAME[st.ph]}</text>`;
+  if (!arr.length) { el.innerHTML = h + `<text class="wv-n" x="120" y="118" text-anchor="middle">Build your ${PH_NAME[st.ph]} VAD</text><text class="wv-n" x="120" y="136" text-anchor="middle">below and it will appear here.</text>`; return; }
+  const A = analyze(pm), pts = arr.flatMap(p => [[p.x, p.y], tipOf(p)]);
+  const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]), cx = (Math.min(...xs)+Math.max(...xs))/2, cy = (Math.min(...ys)+Math.max(...ys))/2;
+  const k = Math.min(150/Math.max(0.5, Math.max(...xs)-Math.min(...xs)), 150/Math.max(0.5, Math.max(...ys)-Math.min(...ys)), 26);
+  const Q = (x, y) => [120 + (x-cx)*k, 128 - (y-cy)*k];
+  const done = [], geo = [], segs = [], blobs = [];
+  arr.forEach(p => {
+    const u = dir(p.f);
+    const back = done.some(q => { const v = dir(q.f); return u[0]*v[0] + u[1]*v[1] < -0.999 && Math.abs((p.x-q.x)*v[1] - (p.y-q.y)*v[0]) < 0.05; });
+    const sh = back ? [u[1]*5, u[0]*5] : [0, 0], a = Q(p.x, p.y), b = Q(...tipOf(p));
+    const t = [a[0]+sh[0], a[1]+sh[1]], tp = [b[0]+sh[0], b[1]+sh[1]];
+    h += arrow(t[0], t[1], tp[0], tp[1], fcol(p.f), 3);
+    geo.push({ p, t, tp }); segs.push([t, tp]); blobs.push([tp[0], tp[1], 7]);
+    done.push(p);
+  });
+  let sum = null;
+  if (complete(A)) {
+    const m = Math.hypot(...A.sum), a = Q(...A.startTail);
+    if (m < CLOSE_TOL) { h += `<circle class="closed" cx="${r1(a[0])}" cy="${r1(a[1])}" r="9"/>`; blobs.push([a[0], a[1], 11]); sum = { closed:true, a }; }
+    else {
+      let b = Q(...A.endTip), aa = a;
+      const u = [A.sum[0]/m, A.sum[1]/m];
+      if (arr.some(p => { const v = dir(p.f); return Math.abs(u[0]*v[1]-u[1]*v[0]) < 0.01 && Math.abs((A.startTail[0]-p.x)*v[1] - (A.startTail[1]-p.y)*v[0]) < 0.05; })) { const s2 = [-u[1]*9, -u[0]*9]; aa = [a[0]+s2[0], a[1]+s2[1]]; b = [b[0]+s2[0], b[1]+s2[1]]; }
+      const show = story() || st.showSum;
+      h += show ? stealthArrow(aa[0], aa[1], b[0], b[1], 'var(--warn)', 2.6)
+        : `<line x1="${r1(aa[0])}" y1="${r1(aa[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>`;
+      segs.push([aa, b]); sum = { closed:false, a:aa, b, show };
+    }
+  }
+  // labels: placed clear of every arrow and of each other (ΣF first, then the longest forces)
+  const { place, besideSegment, aroundPoint } = makePlacer(segs, blobs, { x0:4, y0:26, x1:236, y1:236 }, [120,128], [{ x0:4, y0:4, x1:110, y1:26 }]);
+  if (sum && sum.closed) {
+    const w = tw(`500 14px ${MATH}`, 'Σ = 0') + tw(`italic 500 14px ${MATH}`, 'F') + 6, r = place(aroundPoint(sum.a, w, 18, 12), w, 18);
+    h += `<text class="lbl lab" x="${r1((r.x0+r.x1)/2)}" y="${r1((r.y0+r.y1)/2)}" text-anchor="middle" dominant-baseline="middle" font-size="14"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> = 0</tspan></text>`;
+  } else if (sum && sum.show) {
+    const w = mathW(SUMF, 14) + 6, r = place(besideSegment(sum.a, sum.b, w, 20), w, 20);
+    h += `<g class="lab">${mathText((r.x0+r.x1)/2, (r.y0+r.y1)/2 + 5, SUMF, 'middle', 14, 'var(--warn)')}</g>`;
+  }
+  [...geo].filter(g => g.p.len*k > 14).sort((x, y) => y.p.len - x.p.len).forEach(g => {
+    const w = tw(`italic 500 13px ${MATH}`, 'F') + tw(`500 8.84px ${MATH}`, sub(g.p.f)) + 6, r = place(besideSegment(g.t, g.tp, w, 18), w, 18);
+    h += `<g class="lab">${svgLabel(g.p.f, (r.x0+r.x1)/2, (r.y0+r.y1)/2 - 2, 'middle', 13, fcol(g.p.f))}</g>`;
+  });
+  el.innerHTML = h;
+}
+
+/* ---------- motion map with Δv ---------- */
+const SPEEDS = { up:[0.45,0.7,0.95], const:[0.75,0.75,0.75], down:[0.95,0.7,0.45] };
+function renderMotionMap(){
+  const ph = PH(), sp = SPEEDS[ph.kind], ma = sc().move, e = [Math.cos(ma*Math.PI/180), -Math.sin(ma*Math.PI/180)];
+  const vertical = Math.abs(e[0]) < 0.2, L = 40, gap = 1.3;
+  const steps = sp.map(s => s*L), total = steps[0]*gap + steps[1]*gap + steps[2];
+  const c = vertical ? [100, 84] : [150, 62];
+  let p = [c[0] - e[0]*total/2, c[1] - e[1]*total/2], h = '';
+  const nrm = vertical ? [-1, 0] : (e[0] >= 0 ? [e[1], -e[0]] : [-e[1], e[0]]);   // label side: left of a vertical map, above a horizontal one
+  steps.forEach((len, k) => {
+    const q = [p[0] + e[0]*len, p[1] + e[1]*len];
+    h += arrow(p[0], p[1], q[0], q[1], 'var(--vel)', 2.4) + `<circle cx="${r1(p[0])}" cy="${r1(p[1])}" r="3.4" fill="var(--ink)"/>`;
+    const m = [(p[0]+q[0])/2 + nrm[0]*12, (p[1]+q[1])/2 + nrm[1]*12 + (vertical ? 5 : 0)];
+    h += mathText(m[0], m[1], [V], vertical ? 'end' : 'middle', 14);
+    p = [p[0] + e[0]*len*gap, p[1] + e[1]*len*gap];
+  });
+  // Δv: below a horizontal or sloped map, to the right of a vertical one
+  const dc = vertical ? [215, 84] : [150, 138];
+  if (ph.dv == null) h += mathText(dc[0], dc[1] + 5, [...DV, {t:' = 0'}], 'middle', 17, 'var(--dv)');
+  else {
+    const u = dirA(ph.dv), d = [u[0], -u[1]], len = 34, a = [dc[0] - d[0]*len/2, dc[1] - d[1]*len/2], b = [dc[0] + d[0]*len/2, dc[1] + d[1]*len/2];
+    h += stealthArrow(a[0], a[1], b[0], b[1], 'var(--dv)', 3);
+    const lp = Math.abs(d[0]) > 0.5 ? [dc[0] + (d[0] > 0 ? -len/2 - 8 : len/2 + 8), dc[1] + 5] : [dc[0] + 14, dc[1] + 5];
+    h += mathText(lp[0], lp[1], DV, Math.abs(d[0]) > 0.5 ? (d[0] > 0 ? 'end' : 'start') : 'start', 17, 'var(--dv)');
+  }
+  const word = { up:'speeding up', const:'constant velocity', down:'slowing down' }[ph.kind];
+  h += `<text class="sk-note" x="${vertical ? 8 : 8}" y="164">${word}</text>`;
+  $('#mmap').innerHTML = h;
+}
+
+/* ---------- VAD state ---------- */
+const bkey = () => `${st.si}:${st.ph}`;
+const buildMap = () => (st.builds[bkey()] ||= new Map());
+// Story mode: the worked VAD, chained in the listed order and centered. During a tween between parts, lengths
+// blend (by force type and direction) and forces that leave shrink to nothing at the end of the chain.
+// Order of addition for the worked VAD, chosen to be easy to read (Richard's request):
+// (1) never add two opposite forces one after the other if any order avoids it, (2) keep turning the same way
+// so the VAD reads as one loop, (3) start with F_g. Forces along a single line can't avoid (1).
+function niceOrder(ph){
+  if (ph._order) return ph._order;
+  const fs = ph.forces, perms = a => a.length <= 1 ? [a] : a.flatMap((x, i) => perms([...a.slice(0, i), ...a.slice(i+1)]).map(r => [x, ...r]));
+  let best = null, bs = Infinity;
+  for (const o of perms(fs.map((f, i) => i))) {
+    let sc = 0, lastTurn = 0;
+    for (let k = 1; k < o.length; k++) {
+      const u = dir(fs[o[k-1]]), v = dir(fs[o[k]]), dot = u[0]*v[0] + u[1]*v[1], cr = u[0]*v[1] - u[1]*v[0];
+      if (dot < -0.99) sc += 100;
+      const turn = Math.abs(cr) < 0.01 ? 0 : Math.sign(cr);
+      if (turn && lastTurn && turn !== lastTurn) sc += 10;
+      if (turn) lastTurn = turn;
+    }
+    if (fs[o[0]].t !== 'g') sc += 1;
+    if (sc < bs) { bs = sc; best = o; }
+  }
+  return (ph._order = best);
+}
+function storyItems(){
+  const to = niceOrder(PH()).map(i => { const f = PH().forces[i]; return { id:i, f, len:f.mag*W_SQ, k:fkey(f) }; });
+  const tw0 = st.tween;
+  if (!tw0) return to;
+  const fr = Math.min(1, (performance.now() - tw0.t0)/TWEEN_MS), e = 1 - Math.pow(1 - fr, 3);
+  const out = to.map(it => ({ ...it, len:(tw0.from.get(it.k) ?? 0)*(1-e) + it.len*e }));
+  for (const [k, o] of tw0.fromF) if (!to.some(it => it.k === k)) out.push({ id:'x'+k, f:o.f, len:o.len*(1-e), k });
+  return out;
+}
+function storyPlaced(){
+  const items = storyItems(), pts = [[0,0]];
+  let cur = [0,0];
+  const m = new Map();
+  items.forEach(it => { const u = dir(it.f); m.set(it.id, { id:it.id, f:it.f, x:cur[0], y:cur[1], len:it.len }); cur = [cur[0]+u[0]*it.len, cur[1]+u[1]*it.len]; pts.push(cur); });
+  const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]), off = [(Math.min(...xs)+Math.max(...xs))/2, (Math.min(...ys)+Math.max(...ys))/2];
+  m.forEach(p => { p.x -= off[0]; p.y -= off[1]; });
+  return m;
+}
+const placed = () => story() ? storyPlaced() : buildMap();
+
+function links(arr){
+  const m = new Map(), inc = new Map();
+  for (const p of arr) { const t = tipOf(p);
+    for (const q of arr) if (q.id!==p.id && !m.has(p.id) && dist(t,[q.x,q.y]) < 0.05) { m.set(p.id,q.id); inc.set(q.id,(inc.get(q.id)||0)+1); } }
+  return { m, inc };
+}
+function analyze(pm = placed()){
+  const arr = [...pm.values()], n = arr.length, sum = [0,0];
+  arr.forEach(p => { const u = dir(p.f); sum[0]+=u[0]*p.len; sum[1]+=u[1]*p.len; });
+  if (!n) return { n, connected:false, sum };
+  if (story()) return { n, connected:true, sum, order:arr.map(p => p.id), startTail:[arr[0].x, arr[0].y], endTip:tipOf(arr[n-1]) };
+  // chainOrder tries every order, so a chain that passes back through its own start (F_g down, F_N back up) still counts
+  const order = chainOrder();
+  if (!order) return { n, connected:false, sum };
+  const start = pm.get(order[0]);
+  return { n, connected:true, sum, order, startTail:[start.x,start.y], endTip:tipOf(pm.get(order[order.length-1])) };
+}
+function downstream(id){
+  const pm = buildMap(), { m } = links([...pm.values()]), out = [], seen = new Set([id]); let j = m.get(id);
+  while (j != null && !seen.has(j)) { const q = pm.get(j); out.push({ id:j, x0:q.x, y0:q.y }); seen.add(j); j = m.get(j); }
+  return out;
+}
+const complete = A => story() ? A.n >= 1 : (A.n === PH().forces.length && A.n >= 2 && A.connected);
+
+/* ---------- FBD ---------- */
+function renderFBD(){
+  const forces = PH().forces, pm = placed();
+  const lenOf = i => { const p = story() ? [...pm.values()].find(q => q.id === i) : pm.get(i); return p ? p.len : null; };
+  const lens = forces.map((f, i) => lenOf(i)).filter(l => l != null);
+  const k = lens.length ? Math.min(36, 150 / Math.max(...lens, 1)) : 0;
+  const anyPlaced = lens.length > 0;
+  // forces that share a direction are drawn side by side, parallel, each tail inside the dot
+  const groups = {}; forces.forEach((f, i) => (groups[f.ang] ||= []).push(i));
+  const segs = [], blobs = [[0,0,11]], boxes = [];
+  let h = '';
+  forces.forEach((f, i) => {
+    const L = lenOf(i), u = dir(f), b = L != null ? Math.max(24, L*k) : 150;
+    const g = groups[f.ang], j = g.indexOf(i), off = (j - (g.length-1)/2)*12, n = [-u[1]*off, -u[0]*off];   // screen offset, perpendicular
+    const t = [n[0], n[1]], tp = [n[0] + u[0]*b, n[1] - u[1]*b];
+    segs.push([t, tp]);
+    const [hl, hw] = headDims(b, 3.5);
+    blobs.push([tp[0]-u[0]*hl/2, tp[1]+u[1]*hl/2, Math.max(hw, hl/2)+2]);
+    const lx = tp[0] + u[0]*28 + (g.length > 1 ? Math.sign(off)*18 : 0), ly = tp[1] - u[1]*22;
+    const lw = tw(`italic 500 17px ${MATH}`, 'F') + tw(`500 11.6px ${MATH}`, sub(f));
+    boxes.push({ x0:lx-lw/2, y0:ly-12, x1:lx+lw/2, y1:ly+14 });
+    h += `<g class="fbd-vec${!story() && anyPlaced && L == null ? ' is-pending' : ''}" data-i="${i}" data-f="${i}"${story() ? '' : ` tabindex="0" role="button" aria-pressed="${L != null}"`} aria-label="Force F sub ${sub(f)}">`+
+      `<line class="hit" x1="${r1(t[0])}" y1="${r1(t[1])}" x2="${r1(tp[0])}" y2="${r1(tp[1])}"/>`+
+      arrow(t[0], t[1], tp[0], tp[1], fcol(f), 3.5) + svgLabel(f, lx, ly, 'middle', 17, fcol(f)) + `</g>`;
+  });
+  fbd.innerHTML = h + `<circle r="8" fill="var(--ink)"/>`;
+  if (hl != null) applyHL();
+}
+function renderChips(){
+  const pm = buildMap();
+  $('#chips').innerHTML = PH().forces.map((f,i) =>
+    `<li><button class="chip" data-i="${i}" data-f="${i}" aria-pressed="${pm.has(i)}"><span class="sw" style="background:${fcol(f)}"></span>${htmlLabel(f)}</button></li>`).join('');
+}
+const TYPE_NAME = { g:'Gravitational', N:'Normal', f:'Friction', T:'Tension', P:'Push', D:'Drag' };
+function renderForceKey(){
+  const names = {};
+  sc().key.split(',').forEach(part => { const [k, v] = part.split('=').map(t => t.trim()); names[k] = v[0].toUpperCase() + v.slice(1); });
+  const boldFirst = w => `<strong>${w[0]}</strong>${w.slice(1)}`;
+  $('#force-key').innerHTML = PH().forces.map((f,i) =>
+    `<li data-f="${i}"><span style="color:${fcol(f)}">${htmlLabel(f)}</span> = ${boldFirst(TYPE_NAME[f.t])} Force Exerted ON the ${boldFirst(names[f.on])} BY the ${boldFirst(names[f.by])}</li>`).join('');
+}
+
+/* ---------- VAD drawing ---------- */
+function renderVAD(){
+  const W = vad.clientWidth || 600, H = vad.clientHeight || 420;
+  vad.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  S = Math.max(14, Math.min(W, H)/10.5); CX = W/2; CY = H/2;
+  let d = '';
+  for (let x = CX % S; x <= W; x += S) d += `M${r1(x)} 0V${H}`;
+  for (let y = CY % S; y <= H; y += S) d += `M0 ${r1(y)}H${W}`;
+  let h = `<path class="grid" d="${d}"/>`;
+  const pm = placed(), arr = [...pm.values()].filter(p => p.len > 0.02);
+  if (!story()) arr.forEach(p => {
+    const active = drag && drag.mode === 'stretch' && drag.id === p.id;
+    if (!st.rails && !active) return;
+    const u = dir(p.f), a = P(p.x-u[0]*80, p.y-u[1]*80), b = P(p.x+u[0]*80, p.y+u[1]*80);
+    h += `<line class="rail${active?' active':''}" x1="${r1(a[0])}" y1="${r1(a[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}" style="stroke:${fcol(p.f)}"/>`;
+  });
+  const A = analyze(pm);
+  // Collinear arrows that double back (N up after F_g down) are drawn nudged sideways so both stay visible.
+  const SHIFT = 8, geo = [];
+  arr.forEach(p => {
+    const u = dir(p.f), t = P(p.x, p.y), tp = P(...tipOf(p));
+    const back = geo.some(g => { const v = dir(g.p.f); if (u[0]*v[0] + u[1]*v[1] > -0.999) return false;
+      return Math.abs((p.x - g.p.x)*v[1] - (p.y - g.p.y)*v[0]) < 0.05; });
+    const s = back ? [u[1]*SHIFT, u[0]*SHIFT] : [0, 0];   // screen right-hand side of the arrow
+    geo.push({ p, f:p.f, t:[t[0]+s[0], t[1]+s[1]], tp:[tp[0]+s[0], tp[1]+s[1]], col:fcol(p.f), k:!story() && known(p.f) });
+  });
+  const segs = geo.map(g => [g.t, g.tp]), pts = geo.flatMap(g => [g.t, g.tp]);
+  const cen = pts.length ? [pts.reduce((s,q)=>s+q[0],0)/pts.length, pts.reduce((s,q)=>s+q[1],0)/pts.length] : [CX,CY];
+  const boxes = [], blobs = [];
+  geo.forEach(g => {
+    if (!g.k && !story()) blobs.push([g.tp[0], g.tp[1], 15]);
+    const L = Math.hypot(g.tp[0]-g.t[0], g.tp[1]-g.t[1]) || 1, [hl, hw] = headDims(L, 4);
+    blobs.push([g.tp[0]-(g.tp[0]-g.t[0])/L*hl*0.5, g.tp[1]-(g.tp[1]-g.t[1])/L*hl*0.5, Math.max(hw, hl*0.5)+3]);
+  });
+
+  // ΣF: closure ring, dashed gap (no arrowhead), or, when shown, the ΣF arrow itself
+  let sigma = null;
+  const showSum = story() || st.showSum;
+  if (complete(A) && arr.length) {
+    const m = Math.hypot(A.sum[0], A.sum[1]);
+    let a = P(...A.startTail);
+    if (m >= CLOSE_TOL) {
+      let b = P(...A.endTip);
+      const u = [A.sum[0]/m, A.sum[1]/m];
+      const lies = arr.some(p => { const v = dir(p.f); return Math.abs(u[0]*v[1]-u[1]*v[0]) < 0.01 && Math.abs((A.startTail[0]-p.x)*v[1] - (A.startTail[1]-p.y)*v[0]) < 0.05; });
+      if (lies) { const s = [-u[1]*SHIFT*1.8, -u[0]*SHIFT*1.8]; a = [a[0]+s[0], a[1]+s[1]]; b = [b[0]+s[0], b[1]+s[1]]; }
+      h += showSum ? `<g class="vis">${stealthArrow(a[0], a[1], b[0], b[1], 'var(--warn)', 3.2)}</g>`
+        : `<line class="vis" x1="${r1(a[0])}" y1="${r1(a[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}" stroke="var(--warn)" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/>`;
+      segs.push([a,b]);
+      sigma = { kind:'gap', a, b };
+    } else {
+      h += `<circle class="closed" cx="${r1(a[0])}" cy="${r1(a[1])}" r="13"/>`;
+      blobs.push([a[0], a[1], 16]);
+      sigma = { kind:'closed', a };
+    }
+  }
+  // Δv from the motion map, for comparison with ΣF
+  let inset = '';
+  if (showSum) {
+    const iw = 128, ih = 84, ix = W - iw - 10, iy = 10, c = [ix + iw/2, iy + 50];
+    boxes.push({ x0:ix, y0:iy, x1:ix+iw, y1:iy+ih });
+    inset = `<rect class="inset" x="${ix}" y="${iy}" width="${iw}" height="${ih}" rx="7"/><text class="inset-t" x="${ix+8}" y="${iy+16}">from the motion map</text>`;
+    const dv = PH().dv;
+    if (dv == null) inset += mathText(c[0], c[1]+6, [...DV, {t:' = 0'}], 'middle', 17, 'var(--dv)');
+    else {
+      const u = dirA(dv), dd = [u[0], -u[1]], L = 30, a = [c[0]-dd[0]*L/2 - (Math.abs(dd[0]) > 0.5 ? 0 : 14), c[1]-dd[1]*L/2], b = [a[0]+dd[0]*L, a[1]+dd[1]*L];
+      inset += stealthArrow(a[0], a[1], b[0], b[1], 'var(--dv)', 3);
+      const lx = Math.abs(dd[0]) > 0.5 ? c[0] : c[0] + 6, ly = Math.abs(dd[0]) > 0.5 ? c[1] + (dd[1] >= 0 ? -10 : 26) : c[1] + 6;
+      inset += mathText(lx, Math.abs(dd[0]) > 0.5 ? c[1] + 26 : ly, DV, Math.abs(dd[0]) > 0.5 ? 'middle' : 'start', 17, 'var(--dv)');
+    }
+  }
+  const { place, besideSegment, aroundPoint } = makePlacer(segs, blobs, { x0:4, y0:4, x1:W-4, y1:H-4 }, cen, boxes);
+
+  geo.forEach(g => {
+    const { p, t, tp, col, k } = g;
+    h += `<g class="vec" data-id="${p.id}" data-f="${typeof p.id === 'number' ? p.id : ''}">`+
+      `<line class="hit" data-part="body" x1="${r1(t[0])}" y1="${r1(t[1])}" x2="${r1(tp[0])}" y2="${r1(tp[1])}"/>`+
+      (k || story() ? '' : `<circle class="ring vis" cx="${r1(tp[0])}" cy="${r1(tp[1])}" r="14" style="stroke:${col}"/>`)+
+      `<g class="vis">${arrow(t[0],t[1],tp[0],tp[1],col,4)}</g>`+
+      (story() ? '' : `<circle class="handle ${k?'locked':'free'}" data-part="handle" cx="${r1(tp[0])}" cy="${r1(tp[1])}" r="18"/>`)+
+      `</g>`;
+  });
+
+  let lh = '';
+  if (sigma) {
+    if (sigma.kind === 'gap' && showSum) {
+      const w = mathW(SUMF, 20) + 10, hh = 30, r = place(besideSegment(sigma.a, sigma.b, w, hh), w, hh);
+      lh += `<g class="lab">${mathText((r.x0+r.x1)/2, (r.y0+r.y1)/2 + 7, SUMF, 'middle', 20, 'var(--warn)')}</g>`;
+    } else {
+      const sym = sigma.kind === 'gap' ? '≠' : '=';
+      const w = tw(`500 20px ${MATH}`, 'Σ') + tw(`italic 500 20px ${MATH}`, 'F') + tw(`500 20px ${MATH}`, ` ${sym} 0`) + 10, hh = 28;
+      const r = sigma.kind === 'gap' ? place(besideSegment(sigma.a, sigma.b, w, hh), w, hh) : place(aroundPoint(sigma.a, w, hh, 20), w, hh);
+      lh += `<text class="lbl ${sigma.kind==='gap'?'gap':''} lab" x="${r1((r.x0+r.x1)/2)}" y="${r1((r.y0+r.y1)/2)}" text-anchor="middle" dominant-baseline="middle" font-size="20"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> ${sym} 0</tspan></text>`;
+    }
+  }
+  [...geo].filter(g => g.p.len > 0.6).sort((a,b) => b.p.len - a.p.len).forEach(g => {
+    const w = tw(`italic 500 18px ${MATH}`, 'F') + tw(`500 12.24px ${MATH}`, sub(g.f)) + 8, hh = 26;
+    const r = place(besideSegment(g.t, g.tp, w, hh), w, hh);
+    lh += `<g class="lab">${svgLabel(g.f, (r.x0+r.x1)/2, (r.y0+r.y1)/2 - 2, 'middle', 18, g.col)}</g>`;
+  });
+  h += inset + lh;
+  if (!story() && st.check && st.check.sig === placedSig()) st.check.pts.forEach(q => { const c = P(...q); h += `<circle class="bad-ring" cx="${r1(c[0])}" cy="${r1(c[1])}" r="13"/>`; });
+  if (snapPt) { const c = P(...snapPt); h += `<circle class="snap" cx="${r1(c[0])}" cy="${r1(c[1])}" r="10"/>`; }
+  if (st.anim) h += `<g id="anim">${animLayer()}</g>`;
+  vad.classList.toggle('animating', !!st.anim);
+  vad.innerHTML = h;
+  renderWatchVAD();
+  if (hl != null) applyHL();
+}
+
+/* ---------- status line ---------- */
+function sumMatches(A){ return PH().dv != null && angDiff(angOf(A.sum), PH().dv) <= DIR_TOL; }
+function updateStatus(){
+  const A = analyze(), total = PH().forces.length, obj = sc().obj;
+  let msg;
+  if (story()) {
+    const ph = PH();
+    msg = ph.dv == null
+      ? `The VAD ends where it started, so the forces are balanced (Σ<i>F</i> = 0). Δ<i class="vx">v</i> = 0, so the ${obj}’s velocity stays the same.`
+      : `The VAD doesn’t end where it started, so the forces are unbalanced (Σ<i>F</i> ≠ 0). Σ<i class="vx">F</i> points the same direction as Δ<i class="vx">v</i>, so the ${obj} ${ph.kind === 'up' ? 'speeds up' : 'slows down'}.`;
+  } else if (!A.n) msg = 'Click a force on the free body diagram to bring it here.';
+  else if (A.n < total) msg = `${A.n} of ${total} forces placed. Bring over the rest.`;
+  else if (!A.connected) msg = 'Join every arrow head-to-tail. Drag an arrow near another’s head and it snaps into place.';
+  else {
+    const m = Math.hypot(...A.sum);
+    if (m < CLOSE_TOL) msg = 'The VAD ends where it started, so the forces are balanced (Σ<i>F</i> = 0).';
+    else {
+      msg = 'The VAD doesn’t end where it started, so the forces are unbalanced (Σ<i>F</i> ≠ 0).';
+      if (st.showSum && PH().dv != null) msg += sumMatches(A) ? ' Σ<i class="vx">F</i> points the same direction as Δ<i class="vx">v</i>.' : ' Σ<i class="vx">F</i> doesn’t point the same direction as Δ<i class="vx">v</i> yet.';
+    }
+  }
+  $('#msg').innerHTML = msg;
+  clearStaleCheck();
+}
+
+/* ---------- Check my VAD ----------
+   (1) every force joined head to tail in one chain; (2) consistent with the motion map:
+   Δv = 0 → ends where it started; Δv ≠ 0 → doesn't, and ΣF (start of the chain to its end) points along Δv. Hints only. */
+const NEAR_TOL = 0.5, LINK_TOL = 0.05;
+const near = (a, b) => dist(a, b) < LINK_TOL;
+const nm = p => htmlLabel(p.f);
+const placedSig = () => [...buildMap().values()].map(p => `${p.id}:${p.x.toFixed(3)},${p.y.toFixed(3)},${p.len.toFixed(3)}`).sort().join('|') + `#${bkey()}`;
+function chainOrder(){
+  const arr = [...buildMap().values()];
+  if (arr.length <= 1) return arr.map(p => p.id);
+  const joins = (a, b) => near(tipOf(a), [b.x, b.y]);
+  const walk = (path, left) => {
+    if (!left.length) return path;
+    for (const q of left) if (joins(path.at(-1), q)) { const r = walk([...path, q], left.filter(x => x !== q)); if (r) return r; }
+    return null;
+  };
+  for (const a of arr) { const r = walk([a], arr.filter(x => x !== a)); if (r) return r.map(p => p.id); }
+  return null;
+}
+function checkChain(){
+  const total = PH().forces.length, arr = [...buildMap().values()], pts = [];
+  if (!arr.length) return { ok:false, msg:'Bring the forces from the free body diagram into the VAD first: click each force on the FBD.', pts };
+  if (arr.length < total) {
+    const miss = PH().forces.map((f, i) => i).filter(i => !buildMap().has(i)).map(i => htmlLabel(F(i)));
+    return { ok:false, msg:`Your FBD has ${total} forces, but your VAD has ${arr.length}. Every force from the FBD goes in the VAD once. Still missing: ${miss.join(', ')}.`, pts };
+  }
+  if (chainOrder()) return { ok:true, msg:'Every force from the FBD is in the VAD, and each tail sits on the head of the arrow before it.', pts };
+  const T = p => [p.x, p.y], Hd = p => tipOf(p);
+  const next = new Map(arr.map(p => [p.id, arr.filter(q => q !== p && near(Hd(p), T(q)))]));
+  const prev = new Map(arr.map(q => [q.id, arr.filter(p => p !== q && near(Hd(p), T(q)))]));
+  for (const p of arr) for (const q of arr) {
+    if (p.id >= q.id) continue;
+    if (near(Hd(p), Hd(q))) return { ok:false, msg:`${nm(p)} and ${nm(q)} meet <strong>head to head</strong>. In a VAD, each tail goes on the head of the arrow before it.`, pts:[Hd(p)] };
+    if (near(T(p), T(q)) && !prev.get(p.id).length && !prev.get(q.id).length)
+      return { ok:false, msg:`${nm(p)} and ${nm(q)} start from the same point (<strong>tail to tail</strong>). In a VAD, each tail goes on the head of the arrow before it.`, pts:[T(p)] };
+  }
+  for (const p of arr) if (next.get(p.id).length > 1) { const [a, b] = next.get(p.id);
+    return { ok:false, msg:`${nm(a)} and ${nm(b)} both start from the head of ${nm(p)}. Only one arrow can follow each force.`, pts:[Hd(p)] }; }
+  for (const q of arr) if (prev.get(q.id).length > 1) { const [a, b] = prev.get(q.id);
+    return { ok:false, msg:`${nm(a)} and ${nm(b)} both end at the tail of ${nm(q)}. Only one arrow can come before each force.`, pts:[T(q)] }; }
+  const loose = arr.find(p => !next.get(p.id).length && !prev.get(p.id).length);
+  if (loose) return { ok:false, msg:`${nm(loose)} isn’t joined to the others. Put its tail on the head of another arrow.`, pts:[T(loose)] };
+  const starts = arr.filter(p => !prev.get(p.id).length);
+  return { ok:false, msg:`Your arrows form ${starts.length} separate chains. Join them into one chain, with each tail on the head of the arrow before it.`, pts:starts.map(T) };
+}
+function checkMotion(){
+  const A = analyze(), gap = Math.hypot(...A.sum), obj = sc().obj, pts = [A.startTail, A.endTip];
+  const dvTxt = 'Δ<i class="vx">v</i>', sfTxt = 'Σ<i class="vx">F</i>';
+  if (balanced()) {
+    if (gap < CLOSE_TOL) return { ok:true, msg:`Your VAD ends where it started, so the forces are balanced. That is consistent with the motion map: ${dvTxt} = 0, so the ${obj}’s velocity is not changing.`, pts:[] };
+    if (gap < NEAR_TOL) return { ok:false, maybe:true, msg:`Your VAD <strong>almost</strong> ends where it started. The motion map shows ${dvTxt} = 0, so make it end exactly where it started.`, pts };
+    return { ok:false, msg:`Your VAD doesn’t end where it started, but the motion map shows ${dvTxt} = 0: the ${obj}’s velocity is not changing. Adjust the lengths until your VAD ends where it started.`, pts };
+  }
+  if (gap < NEAR_TOL) return { ok:false, msg:`Your VAD ends where it started (or nearly), so the forces would be balanced. But the motion map shows the ${obj} ${PH().kind === 'up' ? 'speeding up' : 'slowing down'}: ${dvTxt} ≠ 0. Which force has to be bigger or smaller during this part of the story?`, pts };
+  if (!sumMatches(A)) return { ok:false, msg:`Your VAD doesn’t end where it started, so the forces are unbalanced. But ${sfTxt} (from the start of your VAD to its end) doesn’t point the same direction as ${dvTxt} on the motion map. Adjust the lengths until it does. Turn on “Show ${sfTxt} and ${dvTxt}” to compare them.`, pts };
+  return { ok:true, msg:`Your VAD doesn’t end where it started, so the forces are unbalanced, and ${sfTxt} points the same direction as ${dvTxt} on the motion map: the ${obj} ${PH().kind === 'up' ? 'speeds up' : 'slows down'}.`, pts:[] };
+}
+function runCheck(){
+  const c1 = checkChain(), c2 = c1.ok ? checkMotion() : null, done = c1.ok && c2.ok;
+  const row = (cls, mk, ttl, msg) => `<li class="${cls}"><span class="mk" aria-hidden="true">${mk}</span><span><span class="ttl">${ttl}</span>${msg}</span></li>`;
+  const mark = r => r.ok ? ['ok', '✓'] : r.maybe ? ['maybe', '?'] : ['no', '✗'];
+  let h = '<ol>' + row(...mark(c1), c1.ok ? '1. You correctly added every force head to tail' : '1. You DID NOT add every force head to tail', c1.msg);
+  h += c2 ? row(...mark(c2), c2.ok ? '2. Your VAD result is consistent with the motion'
+                             : c2.maybe ? '2. Consistent with the motion?' : '2. Your VAD result is INCONSISTENT with the motion', c2.msg)
+          : row('wait', '–', '2. Consistent with the motion', 'Fix step 1 first.');
+  h += '</ol>' + (done ? `<div class="done good">✓ Your ${PH_NAME[st.ph]} VAD is correct.</div>` : '<div class="done">Not yet. Fix the step marked above, then check again.</div>');
+  const el = $('#check'); el.innerHTML = h; el.hidden = false;
+  st.check = { sig:placedSig(), pts:(c2 && !c2.ok ? c2.pts : c1.pts) };
+  if (done) (st.done ||= new Set()).add(bkey());
+  renderTabs(); renderVAD();
+}
+function clearStaleCheck(){
+  if (st.check && (story() || st.check.sig !== placedSig())) { st.check = null; $('#check').hidden = true; $('#check').innerHTML = ''; }
+}
+$('#check-btn').addEventListener('click', runCheck);
+
+/* ---------- Vector addition animation: replays the student's own completed VAD ---------- */
+const ANIM_GROW = 1100, ANIM_GAP = 250, ANIM_END = 1800;
+const animTotal = () => st.anim.order.length*(ANIM_GROW + ANIM_GAP) - ANIM_GAP;
+function animLayer(){
+  const a = st.anim; if (!a) return '';
+  const e = performance.now() - a.t0, per = ANIM_GROW + ANIM_GAP, arr = a.order.map(id => buildMap().get(id)), n = arr.length;
+  const ease = f => 1 - Math.pow(1 - f, 3);
+  const all = arr.flatMap(p => [P(p.x, p.y), P(...tipOf(p))]);
+  const cen = [all.reduce((s,q) => s + q[0], 0)/all.length, all.reduce((s,q) => s + q[1], 0)/all.length];
+  const away = (m, d) => { const L = Math.hypot(m[0]-cen[0], m[1]-cen[1]) || 1; return [m[0] + (m[0]-cen[0])/L*d, m[1] + (m[1]-cen[1])/L*d]; };
+  const start = P(arr[0].x, arr[0].y);
+  let h = `<circle cx="${r1(start[0])}" cy="${r1(start[1])}" r="8" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="3 3"/>`;
+  for (let i = 0; i < n; i++) {
+    const frac = e >= i*per + ANIM_GROW ? 1 : e <= i*per ? 0 : ease((e - i*per)/ANIM_GROW);
+    if (frac <= 0) break;
+    const p = arr[i], t = P(p.x, p.y), tp0 = P(...tipOf(p)), tp = [t[0] + (tp0[0]-t[0])*frac, t[1] + (tp0[1]-t[1])*frac];
+    if (Math.hypot(tp[0]-t[0], tp[1]-t[1]) > 3) h += arrow(t[0], t[1], tp[0], tp[1], fcol(p.f), 4);
+    if (frac === 1) { const m = away([(t[0]+tp0[0])/2, (t[1]+tp0[1])/2], 22); h += svgLabel(p.f, m[0], m[1], 'middle', 18, fcol(p.f)); }
+  }
+  if (e >= animTotal()) {
+    const A = analyze(), end = P(...tipOf(arr[n-1])), closed = Math.hypot(...A.sum) < CLOSE_TOL;
+    if (closed) {
+      const m = away(start, 30);
+      h += `<circle class="closed" cx="${r1(start[0])}" cy="${r1(start[1])}" r="13"/><text class="lbl" x="${r1(m[0])}" y="${r1(m[1])}" text-anchor="middle" dominant-baseline="middle" font-size="20"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> = 0</tspan></text>`;
+    } else if (st.showSum) {
+      const m = away([(start[0]+end[0])/2, (start[1]+end[1])/2], 26);
+      h += stealthArrow(start[0], start[1], end[0], end[1], 'var(--warn)', 3.2) + mathText(m[0], m[1]+7, SUMF, 'middle', 20, 'var(--warn)');
+    } else {
+      const m = away([(start[0]+end[0])/2, (start[1]+end[1])/2], 22);
+      h += `<line x1="${r1(start[0])}" y1="${r1(start[1])}" x2="${r1(end[0])}" y2="${r1(end[1])}" stroke="var(--warn)" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/><text class="lbl gap" x="${r1(m[0])}" y="${r1(m[1])}" text-anchor="middle" dominant-baseline="middle" font-size="20"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> ≠ 0</tspan></text>`;
+    }
+  }
+  return h;
+}
+function animFrame(){
+  const a = st.anim; if (!a) return;
+  if (performance.now() - a.t0 > animTotal() + ANIM_END) { stopAnim(); return; }
+  const g = $('#anim'); if (g) g.innerHTML = animLayer();
+  a.raf = requestAnimationFrame(animFrame);
+}
+function startAnim(){
+  const order = buildMap().size === PH().forces.length ? chainOrder() : null;
+  if (!order) { showHint('Bring every force into the VAD and join them head to tail first, then the animation can play.'); return; }
+  st.anim = { order, t0:performance.now(), raf:0 };
+  $('#anim-btn').textContent = 'Stop animation';
+  renderVAD(); st.anim.raf = requestAnimationFrame(animFrame);
+}
+function stopAnim(){
+  if (!st.anim) return;
+  cancelAnimationFrame(st.anim.raf); st.anim = null;
+  $('#anim-btn').textContent = 'Show Vector Addition Animation';
+  renderVAD();
+}
+$('#anim-btn').addEventListener('click', () => st.anim ? stopAnim() : startAnim());
+
+/* ---------- highlighting across the FBD, chips, VAD and force key ---------- */
+let hl = null;
+function applyHL(){
+  document.querySelectorAll('[data-f]').forEach(el => {
+    if (el.dataset.f === '') return;
+    const on = hl != null && +el.dataset.f === hl;
+    el.classList.toggle('dim', hl != null && !on);
+  });
+}
+document.addEventListener('pointerover', e => {
+  if (drag) return;
+  const el = e.target.closest('[data-f]'), v = el && el.dataset.f !== '' ? +el.dataset.f : null;
+  if (v !== hl) { hl = v; applyHL(); }
+});
+
+/* ---------- hide / show ---------- */
+document.querySelectorAll('.rep .hide-btn').forEach(btn => btn.addEventListener('click', () => {
+  const rep = btn.closest('.rep'), hide = btn.getAttribute('aria-pressed') !== 'true';
+  btn.setAttribute('aria-pressed', hide); btn.textContent = hide ? 'Show' : 'Hide';
+  rep.querySelector('.rep-body').hidden = hide; rep.querySelector('.rep-hidden').hidden = !hide;
+}));
+
+/* ---------- page parts ---------- */
+function renderScenarios(){
+  const pick = $('#scns');
+  if (!pick.options.length) pick.innerHTML = SCN.map((s,i) => `<option value="${i}">4.2 #${i+1}: ${s.name}</option>`).join('');
+  pick.value = st.si;
+  $('#prev').disabled = st.si === 0; $('#next').disabled = st.si === SCN.length - 1;
+  $('#desc').textContent = sc().text;
+  $('#key').textContent = sc().key;
+}
+function renderTabs(){
+  $('#tabs').innerHTML = PH_NAME.map((n, k) =>
+    `<button class="tab" role="tab" data-ph="${k}" aria-selected="${k===st.ph}"><strong>${n}${!story() && st.done && st.done.has(`${st.si}:${k}`) ? '<span class="done" aria-label="checked">✓</span>' : ''}</strong>${PH_SUB[k]}</button>`).join('');
+}
+function renderPhase(){
+  const ph = PH();
+  $('#ph-h').textContent = PH_NAME[st.ph] + (st.ph === 1 ? ' (the snapshot)' : '');
+  $('#ph-desc').textContent = ph.desc;
+  const pill = $('#ph-pill');
+  pill.textContent = ph.dv == null ? 'Balanced' : 'Unbalanced';
+  pill.className = `pill story-only ${ph.dv == null ? 'bal' : 'unb'}`;
+  renderChain();
+}
+// Forces → ΣF → Δv → motion, for the current part (story mode)
+const DIR_WORD = { 0:'right', 90:'up', 180:'left', 270:'down', 30:'up the hill', 210:'down the hill' };
+const miniArrow = (ang, col) => `<svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true"><g transform="rotate(${-ang})">${arrow(-11, 0, 11, 0, col, 2.6)}</g></svg>`;
+function renderChain(){
+  const ph = PH(), obj = sc().obj, sf = 'Σ<i class="vx">F</i>', dv = 'Δ<i class="vx">v</i>';
+  const box = (lbl, body, svg = '') => `<div class="link">${svg}<span><small>${lbl}</small><strong>${body}</strong></span></div>`, then = '<span class="then" aria-hidden="true">→</span>';
+  let h;
+  if (ph.dv == null) h = box('FORCES', 'Balanced') + then + box(sf, `${sf} = 0`) + then + box(dv, `${dv} = 0`) + then + box('MOTION', `Constant velocity: the ${obj} keeps moving ${DIR_WORD[sc().move]} at the same speed`);
+  else {
+    const w = DIR_WORD[ph.dv] || 'that way', same = angDiff(ph.dv, sc().move) < 90;
+    h = box('FORCES', 'Unbalanced') + then + box(sf, `points ${w}`, miniArrow(ph.dv, 'var(--warn)')) + then + box(dv, `points ${w}`, miniArrow(ph.dv, 'var(--dv)')) + then +
+      box('MOTION', `${ph.kind === 'up' ? 'Speeding up' : 'Slowing down'}: ${sf} points ${same ? 'the same way' : 'opposite to the way'} the ${obj} is moving`);
+  }
+  $('#chain').innerHTML = h;
+}
+function render(){
+  document.body.classList.toggle('story', story());
+  renderSketch(); renderWatch(); renderGraph(); renderTabs(); renderPhase(); renderMotionMap();
+  renderFBD(); renderForceKey(); renderChips(); renderVAD(); updateStatus(); applyHL();
+}
+
+/* ---------- story playback and smooth changes between parts ---------- */
+function lensNow(){   // current story lengths by force key (mid-tween included)
+  const from = new Map(), fromF = new Map();
+  storyItems().forEach(it => { if (it.len > 0.001) { from.set(it.k, it.len); fromF.set(it.k, { f:it.f, len:it.len }); } });
+  return { from, fromF };
+}
+function tick(){
+  st.raf = 0;
+  const now = performance.now();
+  if (st.playing) {
+    let T = st.T + (now - st.lastNow)/PLAY_MS; st.lastNow = now;
+    if (T >= 3) { T = 3; st.playing = false; playBtn(); }
+    setT(T);
+  }
+  if (st.tween) { if (now - st.tween.t0 >= TWEEN_MS) st.tween = null; if (story()) { renderVAD(); renderFBD(); } }
+  if (st.playing || st.tween) st.raf = requestAnimationFrame(tick);
+}
+const loop = () => { if (!st.raf) st.raf = requestAnimationFrame(tick); };
+function goPhase(p){
+  if (p === st.ph) return;
+  stopAnim();
+  if (story()) { const { from, fromF } = lensNow(); st.tween = { from, fromF, t0:performance.now() }; loop(); }
+  st.ph = p; hl = null;
+  renderGraph(); renderTabs(); renderPhase(); renderMotionMap(); renderFBD(); renderForceKey(); renderChips(); renderVAD(); updateStatus();
+}
+const playBtn = () => { $('#w-play').textContent = st.playing ? '❚❚ Pause' : '▶ Play'; };
+function stopPlay(){ if (st.playing) { st.playing = false; playBtn(); } }
+function togglePlay(){
+  if (st.playing) { stopPlay(); return; }
+  if (st.T >= 2.999) setT(0);
+  st.playing = true; st.lastNow = performance.now(); playBtn(); loop();
+}
+
+/* ---------- actions ---------- */
+function toggleForce(i){
+  if (story()) return;
+  stopAnim();
+  const pm = buildMap();
+  if (pm.has(i)) pm.delete(i);
+  else {
+    const f = F(i), u = dir(f), len = known(f) ? f.mag*W_SQ : 2, k = pm.size;
+    const c = [((k % 3) - 1)*3.5, 2 - Math.floor(k/3)*3.5];
+    pm.set(i, { id:i, f, x:c[0]-u[0]*len/2, y:c[1]-u[1]*len/2, len });
+  }
+  render();
+}
+function selectScenario(i){
+  stopAnim(); stopPlay(); st.tween = null;
+  st.si = i; st.ph = 1; st.T = 1.5; hl = null;
+  renderScenarios(); render();
+}
+function setMode(m){
+  stopAnim(); stopPlay(); st.tween = null; st.mode = m;
+  if (m === 'story') { st.wForces = true; $('#w-forces').checked = true; }
+  $('#mode-build').setAttribute('aria-pressed', m === 'build'); $('#mode-story').setAttribute('aria-pressed', m === 'story');
+  render();
+}
+function showHint(text, sticky=false){
+  const el = $('#hint'); el.textContent = text; el.classList.add('show');
+  clearTimeout(hintTimer); if (!sticky) hintTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+function hideHint(){ clearTimeout(hintTimer); $('#hint').classList.remove('show'); }
+
+/* ---------- pointer interaction in the VAD (build mode) ---------- */
+function toWorld(e){
+  const rc = vad.getBoundingClientRect();
+  return [(e.clientX - rc.left - CX)/S, (CY - (e.clientY - rc.top))/S];
+}
+vad.addEventListener('pointerdown', e => {
+  if (st.anim || story()) return;
+  const g = e.target.closest('[data-id]'); if (!g) return;
+  const pm = buildMap(), id = +g.dataset.id, part = e.target.dataset.part || 'body';
+  const now = performance.now();
+  if (lastTap.id === id && now - lastTap.t < 350) { lastTap = {}; pm.delete(id); render(); return; }
+  lastTap = { id, t:now };
+  const p = pm.get(id); pm.delete(id); pm.set(id, p);
+  const w = toWorld(e);
+  if (part === 'handle') {
+    if (known(p.f)) { showHint('The gravitational force sets the scale for this VAD, so its length is fixed. Drag the shaft to move it.'); renderVAD(); return; }
+    drag = { mode:'stretch', id, down:downstream(id), tip0:tipOf(p) };
+  } else drag = { mode:'move', id, off:[w[0]-p.x, w[1]-p.y] };
+  vad.setPointerCapture(e.pointerId); e.preventDefault(); renderVAD();
+});
+vad.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const pm = buildMap(), w = toWorld(e), p = pm.get(drag.id), u = dir(p.f);
+  snapPt = null;
+  if (drag.mode === 'move') {
+    p.x = w[0]-drag.off[0]; p.y = w[1]-drag.off[1];
+    const myTip = tipOf(p); let best = 0.45, adj = null;
+    for (const q of pm.values()) {
+      if (q.id === p.id) continue;
+      const qt = tipOf(q), d1 = dist([p.x,p.y], qt), d2 = dist(myTip, [q.x,q.y]);
+      if (d1 < best) { best = d1; adj = [qt[0]-p.x, qt[1]-p.y]; snapPt = qt; }
+      if (d2 < best) { best = d2; adj = [q.x-myTip[0], q.y-myTip[1]]; snapPt = [q.x,q.y]; }
+    }
+    if (adj) { p.x += adj[0]; p.y += adj[1]; }
+  } else {
+    const rx = w[0]-p.x, ry = w[1]-p.y;
+    let L = rx*u[0] + ry*u[1]; const perp = Math.abs(rx*u[1] - ry*u[0]);
+    L = Math.max(0.3, Math.min(14, Math.round(L*20)/20));
+    const ex = new Set([p.id, ...drag.down.map(d => d.id)]);
+    for (const q of pm.values()) {
+      if (ex.has(q.id)) continue;
+      const qx = q.x-p.x, qy = q.y-p.y, Lq = qx*u[0]+qy*u[1], dq = Math.abs(qx*u[1]-qy*u[0]);
+      if (Lq > 0.3 && dq < 0.25 && Math.abs(Lq-L) < 0.4) { L = Lq; snapPt = [q.x,q.y]; break; }
+    }
+    p.len = L;
+    const tp = tipOf(p), dx = tp[0]-drag.tip0[0], dy = tp[1]-drag.tip0[1];
+    drag.down.forEach(d => { const q = pm.get(d.id); q.x = d.x0+dx; q.y = d.y0+dy; });
+    if (perp > 1.2) showHint('Direction is locked. Only the length can change, so the head stays on the dashed line.', true);
+    else hideHint();
+  }
+  renderVAD(); renderFBD();
+});
+function endDrag(){ if (!drag) return; drag = null; snapPt = null; hideHint(); renderVAD(); renderFBD(); updateStatus(); }
+vad.addEventListener('pointerup', endDrag);
+vad.addEventListener('pointercancel', endDrag);
+
+/* ---------- wiring ---------- */
+$('#scns').addEventListener('change', e => selectScenario(+e.target.value));
+$('#prev').addEventListener('click', () => { if (st.si > 0) selectScenario(st.si - 1); });
+$('#next').addEventListener('click', () => { if (st.si < SCN.length - 1) selectScenario(st.si + 1); });
+$('#mode-build').addEventListener('click', () => setMode('build'));
+$('#mode-story').addEventListener('click', () => setMode('story'));
+$('#tabs').addEventListener('click', e => {
+  const t = e.target.closest('[data-ph]'); if (!t) return;
+  const k = +t.dataset.ph; stopPlay();
+  if (Math.min(2, Math.floor(st.T)) !== k) setT(k + 0.5);
+});
+// click or drag on the story graph to move the clock
+const graphT = e => { const p = new DOMPoint(e.clientX, e.clientY).matrixTransform($('#graph').getScreenCTM().inverse()); return (p.x - GX0)/(GX1 - GX0)*3; };
+$('#graph').addEventListener('pointerdown', e => { stopPlay(); $('#graph').setPointerCapture(e.pointerId); st.gDrag = true; setT(graphT(e)); });
+$('#graph').addEventListener('pointermove', e => { if (st.gDrag) setT(graphT(e)); });
+['pointerup','pointercancel'].forEach(ev => $('#graph').addEventListener(ev, () => { st.gDrag = false; }));
+$('#w-play').addEventListener('click', togglePlay);
+$('#w-reset').addEventListener('click', () => { stopPlay(); setT(0); });
+$('#w-slider').addEventListener('input', e => { stopPlay(); setT(+e.target.value/100); });
+[['w-trail','wTrail'],['w-vel','wVel'],['w-forces','wForces'],['w-vad','wVad']].forEach(([id, k]) => $('#'+id).addEventListener('change', e => { st[k] = e.target.checked; renderWatch(); }));
+$('#chips').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) toggleForce(+b.dataset.i); });
+fbd.addEventListener('click', e => { const g = e.target.closest('[data-i]'); if (g) toggleForce(+g.dataset.i); });
+fbd.addEventListener('keydown', e => {
+  const g = e.target.closest('[data-i]');
+  if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleForce(+g.dataset.i); }
+});
+$('#rails').addEventListener('change', e => { st.rails = e.target.checked; renderVAD(); });
+$('#show-sum').addEventListener('change', e => { st.showSum = e.target.checked; renderVAD(); updateStatus(); });
+$('#restart').addEventListener('click', () => { stopAnim(); buildMap().clear(); render(); });
+new ResizeObserver(() => renderVAD()).observe(vad);
+
+renderScenarios(); render();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => render());
+</script>
+</body>
+</html>
