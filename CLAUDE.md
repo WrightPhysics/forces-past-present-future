@@ -4,7 +4,7 @@ Interactive simulation for Richard Wright's Advanced Physics class, built from t
 
 It reuses code from `physics-force-vad-solve` (see that repo's CLAUDE.md): the `wright vector` arrows, the label placer `makePlacer`, head-to-tail snapping with locked directions, Check my VAD (`checkChain`) and the vector addition animation. Keep shared code consistent when fixing it.
 
-Will be live at **https://wrightphysics.org/forces-past-present-future/**. The GitHub repo `WrightPhysics/forces-past-present-future` hasn't been created yet, and the homepage card hasn't been added yet.
+Live at **https://wrightphysics.org/forces-past-present-future/** (repo `WrightPhysics/forces-past-present-future`, GitHub Pages from `main`, root). The homepage card has not been added yet.
 
 ## How the project works
 
