@@ -49,8 +49,7 @@ h2{font-size:1.05rem;margin:0 0 10px}
 .seg button{font:inherit;font-weight:700;padding:8px 14px;border:0;background:var(--panel);color:var(--ink);cursor:pointer}
 .seg button+button{border-left:1px solid var(--ink)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
-.top{display:grid;grid-template-columns:minmax(200px,.8fr) minmax(240px,.9fr) minmax(340px,1.5fr);gap:16px;margin-bottom:16px;align-items:start}
-@media (max-width:1000px){.top{grid-template-columns:repeat(2,minmax(0,1fr))}.top .graph-rep{grid-column:1/-1}}
+.top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px;align-items:start}
 @media (max-width:640px){.top{grid-template-columns:1fr}}
 .panel{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:16px}
 .rep-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
@@ -62,7 +61,7 @@ h2{font-size:1.05rem;margin:0 0 10px}
 .key{margin:0;color:var(--muted);font-size:.9rem}
 .note{font-size:.88rem;color:var(--muted);margin:6px 0 0}
 #sketch,#graph,#mmap{display:block;width:100%;height:auto}
-#graph{max-height:320px}
+#sketch{max-height:250px}
 #mmap{max-width:440px;margin:0 auto}
 .sk{stroke:var(--ink);stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .sk-fill{fill:var(--sheet)}
@@ -82,23 +81,29 @@ h2{font-size:1.05rem;margin:0 0 10px}
 .g-hit{fill:transparent;cursor:pointer}
 .g-shade{fill:var(--shade)}
 .watch{margin-bottom:16px}
-.wstage{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
-.wstage #watch{flex:3 1 380px;min-width:0}
-#wvad{display:block;flex:1 1 220px;max-width:320px;aspect-ratio:1;background:var(--sheet);border:1px solid var(--rule);border-radius:8px}
+/* animation and its VAD side by side, the graph and slider right under them; on phones the VAD moves below the slider */
+.wstage{display:grid;grid-template-columns:minmax(0,3fr) minmax(200px,1fr);grid-template-areas:"scene vad" "graph graph" "slide slide";column-gap:10px;align-items:start}
+.wstage #watch{grid-area:scene}
+.wstage #graph{grid-area:graph}
+.wstage .wslide{grid-area:slide}
+#wvad{grid-area:vad;display:block;width:100%;max-width:320px;aspect-ratio:1;background:var(--sheet);border:1px solid var(--rule);border-radius:8px}
 #wvad[hidden]{display:none}
-@media (max-width:640px){#wvad{flex:1 1 100%;max-width:240px;margin:0 auto}}
+.wstage:has(#wvad[hidden]){grid-template-columns:1fr;grid-template-areas:"scene" "graph" "slide"}
+@media (max-width:640px){.wstage{grid-template-columns:1fr;grid-template-areas:"scene" "graph" "slide" "vad"}#wvad{max-width:240px;justify-self:center;margin-top:12px}}
 .wv-t{font-family:var(--body);font-size:12px;font-weight:700;fill:var(--muted);letter-spacing:.04em}
 .wv-n{font-family:var(--body);font-size:12px;fill:var(--muted)}
 #watch{display:block;width:100%;height:auto;max-height:380px;background:var(--sheet);border:1px solid var(--rule);border-radius:8px}
 .wctl{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:10px}
-.wslide{flex:1 1 260px;min-width:0}
+.wslide{margin-top:2px}
 .wslide input{width:100%;margin:0;accent-color:var(--dv);cursor:pointer}
 .wticks{display:flex;font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.04em}
 .wticks span{flex:1;text-align:center}
+.wticks[hidden]{display:none}
 .w-read{min-width:20ch;font-weight:700}
 .wopts{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px}
 .wopts label{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:.95rem}
-#graph{cursor:pointer;touch-action:none}
+#graph{display:block;width:100%;height:auto;margin-top:10px;cursor:pointer;touch-action:none}
+#graph[hidden]{display:none}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:0 0 0}
 @media (max-width:480px){.tabs{flex-wrap:nowrap;gap:4px}.tab{padding:8px;font-size:.85rem}}
 .tab{font:inherit;flex:1 1 0;min-width:0;text-align:left;padding:10px 14px;border:1px solid var(--rule);border-bottom:0;border-radius:10px 10px 0 0;background:var(--sheet);color:var(--muted);cursor:pointer}
@@ -214,14 +219,6 @@ body:not(.story) .story-only{display:none !important}
       <div class="rep-body"><svg id="sketch" viewBox="0 0 320 220" role="img" aria-label="Sketch of the situation"></svg></div>
       <p class="rep-hidden" hidden>Hidden. Sketch it from the description.</p>
     </section>
-    <section class="panel rep graph-rep" aria-labelledby="gr-h">
-      <div class="rep-head"><h2 id="gr-h">Story Graph: velocity vs. clock reading</h2><button class="hide-btn" aria-pressed="false">Hide</button></div>
-      <div class="rep-body">
-        <svg id="graph" viewBox="0 0 490 240" role="img" aria-label="Velocity versus clock reading for the whole story"></svg>
-        <p class="note">The direction of motion in the snapshot is positive. <strong>The clock reading is not to scale:</strong> each part gets the same width here, but in real life some parts are very brief (a landing) and others last a long time. Click or drag on the graph to move the clock.</p>
-      </div>
-      <p class="rep-hidden" hidden>Hidden. Sketch the velocity vs. clock reading graph for all three parts.</p>
-    </section>
   </div>
 
   <section class="panel rep watch" aria-labelledby="w-h">
@@ -230,14 +227,15 @@ body:not(.story) .story-only{display:none !important}
       <div class="wstage">
         <svg id="watch" viewBox="0 0 640 260" role="img" aria-label="Animation of the whole story: past, present and future"></svg>
         <svg id="wvad" viewBox="0 0 240 240" role="img" aria-label="Vector addition diagram for this part of the story"></svg>
+        <svg id="graph" viewBox="0 0 900 182" role="img" aria-label="Story graph: velocity versus clock reading for the whole story"></svg>
+      <div class="wslide" id="wslide">
+        <input type="range" id="w-slider" min="0" max="300" step="1" value="150" aria-label="Clock reading: drag to move through the story">
+        <div class="wticks" aria-hidden="true" hidden><span>PAST</span><span>PRESENT</span><span>FUTURE</span></div>
+      </div>
       </div>
       <div class="wctl">
         <button class="play" id="w-play">▶ Play</button>
         <button class="btn" id="w-reset" title="Back to the start of the story">⟲ Start</button>
-        <div class="wslide">
-          <input type="range" id="w-slider" min="0" max="300" step="1" value="150" aria-label="Clock reading: drag to move through the story">
-          <div class="wticks" aria-hidden="true"><span>PAST</span><span>PRESENT</span><span>FUTURE</span></div>
-        </div>
         <span id="w-read" class="w-read" aria-live="off"></span>
       </div>
       <div class="wopts">
@@ -245,7 +243,9 @@ body:not(.story) .story-only{display:none !important}
         <label><input type="checkbox" id="w-vel" checked> Velocity arrow</label>
         <label><input type="checkbox" id="w-forces"> Forces on the object</label>
         <label><input type="checkbox" id="w-vad" checked> VAD for this part</label>
+        <label><input type="checkbox" id="w-graph" checked> Velocity vs. clock reading graph</label>
       </div>
+      <p class="note">On the graph, the direction of motion in the snapshot is positive. Click or drag on the graph to move the clock.</p>
       <p class="note"><strong>Not to scale in time:</strong> each part of the story plays for the same amount of time here. In real life, some parts are very brief (a landing, a cable snapping) and others last much longer.</p>
     </div>
     <p class="rep-hidden" hidden>Hidden. Predict the motion from the other representations.</p>
@@ -381,7 +381,7 @@ const SCN = [
 
 const $ = s => document.querySelector(s);
 const vad = $('#vad'), fbd = $('#fbd');
-const st = { si:0, ph:1, mode:'build', builds:{}, rails:false, showSum:false, check:null, anim:null, tween:null, raf:0, T:1.5, playing:false, wTrail:true, wVel:true, wForces:false, wVad:true };
+const st = { si:0, ph:1, mode:'build', builds:{}, rails:false, showSum:false, check:null, anim:null, tween:null, raf:0, T:1.5, playing:false, wTrail:true, wVel:true, wForces:false, wVad:true, wGraph:true };
 let drag = null, snapPt = null, S = 40, CX = 0, CY = 0, lastTap = {}, hintTimer = null;
 
 const sc = () => SCN[st.si];
@@ -559,9 +559,9 @@ const SKETCH = [
     skT(178,135,'Block (B)') + skT(14,74,'Student (S)','sk-lbl','start') + skT(124,120,'3 N','sk-note') +
     skT(236,180,'Table (T)') + skT(306,218,'Earth (E)','sk-lbl','end'),
   // Child on a moving sidewalk
-  () => hatch(10,62,180) + hatch(258,310,180) +
-    `<rect class="sk sk-fill" x="62" y="168" width="196" height="14" rx="7"/>`+
-    `<circle class="sk" cx="69" cy="175" r="4"/><circle class="sk" cx="251" cy="175" r="4"/>`+
+  () => hatch(10,36,180) + hatch(284,310,180) +
+    `<rect class="sk sk-fill" x="36" y="168" width="248" height="14" rx="7"/>`+
+    `<circle class="sk" cx="43" cy="175" r="4"/><circle class="sk" cx="277" cy="175" r="4"/>`+
     person(160,168,[170,98]) +
     sysBox(146,27,30,141) +
     skT(182,90,'Child (C)','sk-lbl','start') + skT(160,200,'Moving sidewalk (S)') +
@@ -599,12 +599,23 @@ const SKETCH = [
 function renderSketch(){ $('#sketch').innerHTML = SKETCH[st.si](); }
 
 /* ---------- story graph: velocity vs. clock reading ---------- */
-const GX0 = 40, GX1 = 412, GY0 = 30, GY1 = 196;
+let GX0 = 46, GX1 = 800, GY0 = 28, GY1 = 150, GVW = 900;
+// Wide: a short, wide graph under the animation. Narrow (phones): the taller layout. The slider below is inset to
+// match the graph's time axis, so its handle lines up with the clock cursor.
+function graphLayout(){
+  const wide = ($('#graph').clientWidth || $('#wslide').clientWidth || 800) >= 560;
+  [GX0, GX1, GY0, GY1, GVW] = wide ? [46, 800, 28, 150, 900] : [40, 412, 30, 196, 490];
+  $('#graph').setAttribute('viewBox', `0 0 ${GVW} ${GY1 + 32}`);
+  const ws = $('#wslide').style;
+  ws.marginLeft = st.wGraph ? (GX0/GVW*100).toFixed(2) + '%' : '0';
+  ws.marginRight = st.wGraph ? ((GVW-GX1)/GVW*100).toFixed(2) + '%' : '0';
+}
 function graphScale(){
   const all = sc().v.flat(), top = Math.max(...all)*1.18, bot = Math.min(0, ...all) < 0 ? Math.min(...all)*1.25 : 0;
   return { x:t => GX0 + t/3*(GX1-GX0), y:v => GY0 + (top - v)/(top - bot)*(GY1-GY0) };
 }
 function renderGraph(){
+  graphLayout();
   const { x, y } = graphScale(), v = sc().v, y0 = y(0);
   let h = `<rect class="g-shade" x="${r1(x(st.ph))}" y="${GY0-14}" width="${r1(x(1)-x(0))}" height="${GY1-GY0+14}"/>`;
   h += `<line class="g-div" x1="${r1(x(1))}" y1="${GY0-14}" x2="${r1(x(1))}" y2="${GY1}"/><line class="g-div" x1="${r1(x(2))}" y1="${GY0-14}" x2="${r1(x(2))}" y2="${GY1}"/>`;
@@ -657,13 +668,14 @@ const WATCH = [
       return h;
     } },
   // Child: steps onto the moving sidewalk, rides it, steps off onto the floor
-  { e:[1,0], vb:'0 40 640 190', ctr:x => [150+180*x, 150],
+  { e:[1,0], vb:'0 40 640 190', ctr:x => [70+267*x, 150],
     draw(T, x){
-      const cx = 150+180*x, off = (T*180) % 28;
-      let h = hatch(0,140,188) + hatch(420,640,188) + `<rect class="sk sk-fill" x="140" y="188" width="280" height="12" rx="6"/>`;
-      let m = ''; for (let xm = 146 + off; xm < 414; xm += 28) m += `M${r1(xm)},191V197`;
-      h += `<path class="sk-hatch" d="${m}"/><circle class="sk" cx="147" cy="194" r="3.5"/><circle class="sk" cx="413" cy="194" r="3.5"/>`;
-      h += skT(280,218,'Moving sidewalk (S)') + skT(70,218,'Floor (F)') + skT(530,218,'Floor (F)');
+      // the belt runs from x = 60 to 470; the child steps off its end at the end of the present (x = 1.5)
+      const cx = 70+267*x, off = (T*267) % 28;
+      let h = hatch(0,60,188) + hatch(470,640,188) + `<rect class="sk sk-fill" x="60" y="188" width="410" height="12" rx="6"/>`;
+      let m = ''; for (let xm = 66 + off; xm < 464; xm += 28) m += `M${r1(xm)},191V197`;
+      h += `<path class="sk-hatch" d="${m}"/><circle class="sk" cx="67" cy="194" r="3.5"/><circle class="sk" cx="463" cy="194" r="3.5"/>`;
+      h += skT(265,218,'Moving sidewalk (S)') + skT(30,218,'Floor (F)') + skT(555,218,'Floor (F)');
       h += `<circle class="sk sk-fill" cx="${r1(cx)}" cy="118" r="8"/><path class="sk" d="M${r1(cx)},126V158 M${r1(cx)},158L${r1(cx-8)},188 M${r1(cx)},158L${r1(cx+8)},188 M${r1(cx)},134L${r1(cx-9)},156 M${r1(cx)},134L${r1(cx+9)},156"/>`;
       return h;
     } },
@@ -1406,6 +1418,8 @@ $('#w-play').addEventListener('click', togglePlay);
 $('#w-reset').addEventListener('click', () => { stopPlay(); setT(0); });
 $('#w-slider').addEventListener('input', e => { stopPlay(); setT(+e.target.value/100); });
 [['w-trail','wTrail'],['w-vel','wVel'],['w-forces','wForces'],['w-vad','wVad']].forEach(([id, k]) => $('#'+id).addEventListener('change', e => { st[k] = e.target.checked; renderWatch(); }));
+$('#w-graph').addEventListener('change', e => { st.wGraph = e.target.checked; $('#graph').hidden = !st.wGraph; $('.wticks').hidden = st.wGraph; renderGraph(); });
+new ResizeObserver(() => renderGraph()).observe($('#wslide'));
 $('#chips').addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) toggleForce(+b.dataset.i); });
 fbd.addEventListener('click', e => { const g = e.target.closest('[data-i]'); if (g) toggleForce(+g.dataset.i); });
 fbd.addEventListener('keydown', e => {

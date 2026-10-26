@@ -23,8 +23,8 @@ Live at **https://wrightphysics.org/forces-past-present-future/** (repo `WrightP
 ## Page structure
 
 1. Title **"Past, Present, and Future"**, a short intro line, and the scenario picker (← / dropdown / →), labeled "4.2 #N: name". The bar also has the **mode toggle**: **Build it myself** / **Show me the story**.
-2. Top row: **Written Description** (book text verbatim + key) | **Sketch (the snapshot)** | **Story Graph: velocity vs. clock reading**. The graph is split into PAST / PRESENT / FUTURE by dashed lines, like the book. The current part is shaded and its segment is drawn in `--dv`. A clock cursor (line + dot) shows `st.T`, and clicking or dragging on the graph moves the clock. The direction of motion in the snapshot is positive.
-3. **Watch It Happen** (Richard's request): an animation of the whole story, described in its own section below.
+2. Top row: **Written Description** (book text verbatim + key) | **Sketch (the snapshot)** (sketch capped at 250 px tall).
+3. **Watch It Happen** (Richard's request): the animation with its VAD beside it, and **the story graph (velocity vs. clock reading) right under the animation** (Richard wanted students to see the v–t graph with the animation). Details in its own section below.
 4. Part tabs: PAST / PRESENT (the snapshot) / FUTURE, then that part's description. In story mode, a Balanced/Unbalanced pill is also shown.
 5. Work row: **Motion Map and Δv⃗** and **FBD** (with force key) on the left; **VAD** on the right.
 
@@ -43,6 +43,14 @@ Every panel except the VAD has a Hide/Show button.
 
 ## Watch It Happen (the observation)
 
+- **Layout:** `.wstage` is a grid. On desktop it's animation | VAD on top, then the graph and slider at full width. On phones (≤ 640 px) the order is animation, graph, slider, VAD, so the graph stays right under the animation.
+- **Story graph** (`renderGraph`):
+  - Split into PAST / PRESENT / FUTURE by dashed lines, like the book. The current part is shaded and its segment is drawn in `--dv`.
+  - A clock cursor (line + dot) shows `st.T`. Clicking or dragging on the graph moves the clock. The direction of motion in the snapshot is positive.
+  - `graphLayout()` picks a wide, short viewBox (900 wide) or the taller phone one (490 wide) from the graph's width.
+  - The slider is inset to the graph's time axis (`GX0`/`GX1`), so its handle lines up with the cursor.
+  - A "Velocity vs. clock reading graph" checkbox hides it (for students sketching Part A); the PAST/PRESENT/FUTURE labels under the slider then appear.
+
 - **One clock, `st.T`, from 0 to 3** (past, present, future; `PLAY_MS` per part). Everything follows it through `setT()`: the animation, the slider, the graph cursor, and the part tab (`goPhase` when T crosses a boundary).
   - Picking a tab moves T to the middle of that part.
   - Changing scenario sets T = 1.5 (the snapshot).
@@ -55,7 +63,7 @@ Every panel except the VAD has a Hide/Show button.
   - `draw(T, x)`: the scene at that moment. These are the story events:
     - Puck: your hand pushes, then stays where it let go; the air cushion stops in the future.
     - Block: the finger stops and lifts off.
-    - Child: the sidewalk belt marks move at belt speed.
+    - Child: the sidewalk (made longer at Richard's request; belt 60–470) has marks that move at belt speed. The child steps off its end at the end of the present.
     - Parachutist: the parachute opens during the first 0.3, and the figure is drawn at 1.6×.
     - Elevator: Floor 4 down to the Lobby.
     - Car: the cable snaps at T = 2, a "snap!" note appears, and the truck drives on; the car coasts up to a stop at T = 3.
