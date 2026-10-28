@@ -64,13 +64,17 @@ Every panel except the VAD has a Hide/Show button.
     - Puck: your hand pushes, then stays where it let go; the air cushion stops in the future.
     - Block: the finger stops and lifts off.
     - Child: the sidewalk (made longer at Richard's request; belt 60–470) has marks that move at belt speed. The child steps off its end at the end of the present.
-    - Parachutist: the parachute opens during the first 0.3, and the figure is drawn at 1.6×.
+    - Parachutist: the parachute opens during the first 0.3. The figure is drawn at 1.8× with legs 22 long.
+      - **Landing (Richard's request):** the feet touch the ground exactly when the Future starts (T = 2), which is when F_N begins.
+      - Through the Future the feet stay planted while the knees bend and the body and parachute keep coming down to a stop, ending in a partial squat.
+      - The knees bend mostly toward the viewer: only 40% of the bend shows sideways, so it doesn't look like a frog.
+      - `ctr` follows the torso, so the center of mass (and the motion-map dots) moves smoothly the whole way.
     - Elevator: Floor 4 down to the Lobby.
     - Car: the cable snaps at T = 2, a "snap!" note appears, and the truck drives on; the car coasts up to a stop at T = 3.
 - **Overlays:**
   - Motion map dots (default on): dots at equal clock intervals of 0.2.
   - Velocity arrow (default on): light green, drawn beside the object, reversing when v < 0.
-  - Forces on the object (default off): the current part's forces from the object's center, at 42 px per weight.
+  - Forces on the object (default off): the current part's forces from the object's center, at 42 px per weight. Their labels have a halo so they read over the parachute.
 - **VAD for this part** (default on, Richard's request): a small VAD (`#wvad`, `renderWatchVAD`) beside the scene for the part the clock is in. It wraps below the scene on narrow screens.
   - In Show me the story, it's the worked VAD, with ΣF⃗ and the tween between parts.
   - In Build it myself, it mirrors **the student's own VAD** for that part, so it never reveals the answer. Until they build one, it says "Build your … VAD below". ΣF⃗ appears there only when "Show ΣF⃗ and Δv⃗" is on; otherwise it's the dashed gap.

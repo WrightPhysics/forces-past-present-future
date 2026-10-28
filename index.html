@@ -729,15 +729,24 @@ const WATCH = [
       h += `<circle class="sk sk-fill" cx="${r1(cx)}" cy="118" r="8"/><path class="sk" d="M${r1(cx)},126V158 M${r1(cx)},158L${r1(cx-8)},188 M${r1(cx)},158L${r1(cx+8)},188 M${r1(cx)},134L${r1(cx-9)},156 M${r1(cx)},134L${r1(cx+9)},156"/>`;
       return h;
     } },
-  // Parachutist: the parachute opens at the start of the past; lands at the end of the future
-  { e:[0,1], vb:'0 -40 640 300', ctr:x => [320, 110+38*x-32],
+  // Parachutist: the parachute opens at the start of the past. The feet touch the ground exactly when the future
+  // begins (that's when F_N starts); through the future the feet stay planted while the knees bend and the body and
+  // parachute keep coming down to a stop. The center of mass moves 38 px per unit of position the whole way.
+  // Figure drawn at 1.8×, legs 22 long, so the 19 px landing drop ends in a natural partial squat.
+  { e:[0,1], vb:'0 -40 640 300', ctr:x => [320, Math.min(244, 130+38*x) - 56 + Math.max(0, 38*(x-3))],
     draw(T, x){
-      const cx = 320, fy = 110+38*x, s = Math.min(1, 0.35 + T/0.3*0.65), w = 48*s, hg = 40*s, base = fy-50;
+      const K = 1.8, cx = 320, fy = Math.min(244, 130+38*x), dl = Math.max(0, 38*(x-3))/K, U = fy + dl;   // U: the upper body, lowered by the knee bend
+      const s = Math.min(1, 0.35 + T/0.3*0.65), w = 48*s, hg = 40*s, base = U-60;
       let h = hatch(0,640,244) + skT(14,236,'Ground (G)','sk-lbl','start') + skT(630,-22,'not to scale','sk-note','end');
-      h += `<g transform="translate(${cx},${r1(fy)}) scale(1.6) translate(${-cx},${r1(-fy)})">`;
+      h += `<g transform="translate(${cx},${r1(fy)}) scale(${K}) translate(${-cx},${r1(-fy)})">`;
       h += `<path class="sk sk-fill" d="M${r1(cx-w)},${r1(base)} Q${cx},${r1(base-2*hg)} ${r1(cx+w)},${r1(base)} Q${cx},${r1(base-6)} ${r1(cx-w)},${r1(base)}Z"/>`;
-      h += `<path class="sk" style="stroke-width:1.4" d="M${r1(cx-w)},${r1(base)}L${cx-4},${r1(fy-30)} M${r1(cx+w)},${r1(base)}L${cx+4},${r1(fy-30)} M${r1(cx-w*0.4)},${r1(base-3)}L${cx-3},${r1(fy-30)} M${r1(cx+w*0.4)},${r1(base-3)}L${cx+3},${r1(fy-30)}"/>`;
-      h += `<circle class="sk sk-fill" cx="${cx}" cy="${r1(fy-36)}" r="6"/><path class="sk" d="M${cx},${r1(fy-30)}V${r1(fy-12)} M${cx},${r1(fy-12)}L${cx-6},${r1(fy)} M${cx},${r1(fy-12)}L${cx+6},${r1(fy)} M${cx},${r1(fy-27)}L${cx-8},${r1(fy-36)} M${cx},${r1(fy-27)}L${cx+8},${r1(fy-36)}"/></g>`;
+      h += `<path class="sk" style="stroke-width:1.3" d="M${r1(cx-w)},${r1(base)}L${cx-4},${r1(U-40)} M${r1(cx+w)},${r1(base)}L${cx+4},${r1(U-40)} M${r1(cx-w*0.4)},${r1(base-3)}L${cx-3},${r1(U-40)} M${r1(cx+w*0.4)},${r1(base-3)}L${cx+3},${r1(U-40)}"/>`;
+      // legs: hip, knee, foot. Straight before landing; the knees bend out as the hip drops toward the planted feet.
+      const hipY = U-22, half = Math.hypot(7, fy - hipY)/2, bend = Math.sqrt(Math.max(0, (Math.hypot(7, 22)/2)**2 - half*half)), kY = (hipY + fy)/2;
+      // front view: the knees mostly come forward toward the viewer, so only a little of the bend shows sideways
+      const leg = sd => `M${cx},${r1(hipY)}L${r1(cx + sd*(3.5 + bend*0.4))},${r1(kY)}L${cx + sd*7},${r1(fy)}`;
+      h += `<circle class="sk sk-fill" cx="${cx}" cy="${r1(U-46)}" r="6"/><path class="sk" style="stroke-width:1.6" d="M${cx},${r1(U-40)}V${r1(hipY)} ${leg(-1)} ${leg(1)} `+
+        `M${cx},${r1(U-37)}L${cx-8},${r1(U-46)} M${cx},${r1(U-37)}L${cx+8},${r1(U-46)}"/></g>`;
       return h;
     } },
   // Elevator: starts at floor 4, cruises down, stops at the lobby
@@ -778,7 +787,7 @@ function renderWatch(){
     ph.forces.forEach((f, i) => {
       const u = dir(f), g = groups[f.ang], off = (g.indexOf(i) - (g.length-1)/2)*9, n = [-u[1]*off, -u[0]*off];
       const t = [c[0]+n[0], c[1]+n[1]], L = f.mag*42, tp = [t[0]+u[0]*L, t[1]-u[1]*L];
-      h += arrow(t[0], t[1], tp[0], tp[1], fcol(f), 3) + svgLabel(f, tp[0]+u[0]*16 + Math.sign(off)*14, tp[1]-u[1]*14, 'middle', 14, fcol(f));
+      h += arrow(t[0], t[1], tp[0], tp[1], fcol(f), 3) + `<g class="lab">${svgLabel(f, tp[0]+u[0]*16 + Math.sign(off)*14, tp[1]-u[1]*14, 'middle', 14, fcol(f))}</g>`;
     });
     h += `<circle cx="${r1(c[0])}" cy="${r1(c[1])}" r="4.5" fill="var(--ink)"/>`;
   }
@@ -883,8 +892,8 @@ function renderMotionMap(){
   else {
     const u = dirA(ph.dv), d = [u[0], -u[1]], len = 34, a = [dc[0] - d[0]*len/2, dc[1] - d[1]*len/2], b = [dc[0] + d[0]*len/2, dc[1] + d[1]*len/2];
     h += stealthArrow(a[0], a[1], b[0], b[1], 'var(--dv)', 3);
-    const lp = Math.abs(d[0]) > 0.5 ? [dc[0] + (d[0] > 0 ? -len/2 - 8 : len/2 + 8), dc[1] + 5] : [dc[0] + 14, dc[1] + 5];
-    h += mathText(lp[0], lp[1], DV, Math.abs(d[0]) > 0.5 ? (d[0] > 0 ? 'end' : 'start') : 'start', 17, 'var(--dv)');
+    // label centered directly above the arrow (Richard's request)
+    h += mathText(dc[0], Math.min(a[1], b[1]) - 10, DV, 'middle', 17, 'var(--dv)');
   }
   const word = { up:'speeding up', const:'constant velocity', down:'slowing down' }[ph.kind];
   h += `<text class="sk-note" x="${vertical ? 8 : 8}" y="164">${word}</text>`;
