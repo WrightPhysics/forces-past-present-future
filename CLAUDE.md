@@ -105,7 +105,9 @@ For example, the block becomes F_g down → push right → F_N up → friction l
 
 - **Default:** a gap is a dashed segment **with no arrowhead**, labeled ΣF ≠ 0, as in the VAD-solve sim. A closed VAD gets a green ring and ΣF = 0.
 - **"Show ΣF⃗ and Δv⃗"** checkbox (build mode; always on in story mode):
-  - The gap becomes a ΣF⃗ arrow in `--warn` with a filled stealth tip.
+  - The gap becomes the ΣF⃗ arrow, drawn in **Richard's hand-drawn style** (`sumArrow`): an orange (`--sum`) **hollow double-line arrow**, two parallel lines with an open outlined head. It's labeled ΣF⃗ in the same orange.
+  - The style is deliberately different from every force, to reinforce that **ΣF⃗ is not a force**. It only appears as the result on a VAD and **never on an FBD or on the object in the animation**.
+  - The same style is used in the main VAD, the VAD beside the animation, the end of the vector addition animation, and the chain's small ΣF⃗ arrow. ΣF⃗ text in the chain and story tip is orange too (`.sumf`).
   - A small inset in the VAD's top right shows Δv⃗ "from the motion map", so students can see the two point the same way.
   - The status line adds whether they match.
 - Status wording: "The VAD ends where it started, so the forces are balanced (ΣF = 0)." / "The VAD doesn't end where it started, so the forces are unbalanced (ΣF ≠ 0)." Never "closes."
@@ -131,6 +133,8 @@ For example, the block becomes F_g down → push right → F_N up → friction l
 - Force colors are by type (`TYPE_COL`): g `--f0`, T/P `--f1`, N `--f2`, f `--f3`, D `--f4`.
 - Velocity arrows are light green `--vel` with open barbs. Δv⃗ is dark green `--dv` with a filled stealth tip (`stealthArrow`).
 - On the motion map, dot spacing and arrow length follow the speed (`SPEEDS`). Vertical motion maps run down the panel, with Δv⃗ to the right.
-- Collinear arrows that double back in the VAD (F_N up after F_g down) are drawn nudged 8 px to their right-hand side so both stay visible. ΣF⃗ along the same line is nudged to the other side.
+- **Opposite forces on one line** (F_N up after F_g down) are nudged sideways so both stay visible: 18 px in the main VAD, 12 px in the small one, enough room for the hollow ΣF⃗ arrow.
+- **ΣF⃗ on that same line** (elevator, parachutist) goes in a force's column, using `sumColumn`. It picks a column whose stretch of the line ΣF⃗ doesn't overlap, preferring the last force in the chain. Richard's example: in the elevator's past, ΣF⃗ lines up with F_T. In the elevator's future and the parachutist's past and future it lands in F_g's column. Only if no column is free does it go beside the line. Labels avoid the outline's full width (`sumEdges`).
+- **The ΣF⃗ label hugs its arrow** (Richard's request; `sumLabelCands`): beside the middle of the hollow arrow, just outside its outline, on the side away from the forces' center. The other side is a costly fallback, and just past the head is an option for a very short ΣF⃗.
 - In the FBD, forces that share a direction are drawn side by side (parachutist landing: D and N).
 - HTML vector symbols use `<i class="vx">v</i>`, a CSS mask arrow in `currentColor`. Atkinson has no combining arrow (U+20D7), and it rendered as a box. SVG text uses `mathText`.

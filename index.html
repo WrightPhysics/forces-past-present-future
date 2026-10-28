@@ -14,7 +14,7 @@
   padding-bottom:env(safe-area-inset-bottom,0px);
   --paper:#E9EEF2; --sheet:#FBFCFD; --panel:#FFFFFF; --ink:#1D2833; --muted:#5A6A77;
   --rule:#C9D3DB; --grid:#E1E8EE; --good:#2B7A4B; --warn:#A3462F; --bad:#C62828;
-  --vel:#5CB35A; --dv:#1F6B3F; --shade:#EDF3EE;
+  --vel:#5CB35A; --dv:#1F6B3F; --shade:#EDF3EE; --sum:#E08A00;
   --f0:#2F6FB5; --f1:#C0432F; --f2:#2B8A55; --f3:#8246B5; --f4:#A87908;
   --body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
   --math:'STIX Two Text','Cambria Math','Times New Roman',serif;
@@ -23,13 +23,13 @@
   :root:not([data-theme="light"]){
     --paper:#11171D; --sheet:#171F27; --panel:#1B242D; --ink:#E4EBF1; --muted:#9BABB7;
     --rule:#2E3B47; --grid:#222D37; --good:#6CCB95; --warn:#F08C74; --bad:#F2766B;
-    --vel:#7FD07A; --dv:#4FA36A; --shade:#1E2B26; --f0:#72A9EA; --f1:#EF7B67; --f2:#5FC68D; --f3:#B88BE6; --f4:#E3B343;
+    --vel:#7FD07A; --dv:#4FA36A; --shade:#1E2B26; --sum:#F5A623; --f0:#72A9EA; --f1:#EF7B67; --f2:#5FC68D; --f3:#B88BE6; --f4:#E3B343;
   }
 }
 :root[data-theme="dark"]{
   --paper:#11171D; --sheet:#171F27; --panel:#1B242D; --ink:#E4EBF1; --muted:#9BABB7;
   --rule:#2E3B47; --grid:#222D37; --good:#6CCB95; --warn:#F08C74; --bad:#F2766B;
-  --vel:#7FD07A; --dv:#4FA36A; --shade:#1E2B26; --f0:#72A9EA; --f1:#EF7B67; --f2:#5FC68D; --f3:#B88BE6; --f4:#E3B343;
+  --vel:#7FD07A; --dv:#4FA36A; --shade:#1E2B26; --sum:#F5A623; --f0:#72A9EA; --f1:#EF7B67; --f2:#5FC68D; --f3:#B88BE6; --f4:#E3B343;
 }
 *,*::before,*::after{box-sizing:inherit}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
@@ -123,6 +123,7 @@ h2{font-size:1.05rem;margin:0 0 10px}
 .ph-head h2{margin:0;letter-spacing:.04em}
 #ph-desc{margin:0;max-width:85ch}
 .pill{display:inline-block;font-weight:700;font-size:.9rem;padding:2px 10px;border-radius:999px;border:1.5px solid currentColor}
+.sumf{color:var(--sum)}
 .pill.bal{color:var(--good)} .pill.unb{color:var(--warn)}
 .work{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.3fr);gap:16px;align-items:start}
 @media (max-width:900px){.work{grid-template-columns:1fr}}
@@ -206,7 +207,7 @@ body:not(.story) .story-only{display:none !important}
     </div>
   </div>
 
-  <p class="story-tip story-only">Press <strong>▶ Play</strong> or drag the slider to watch the whole story. Look for the pattern: when the forces are <strong>balanced</strong>, Σ<i class="vx">F</i> = 0 and the velocity stays the same. When they are <strong>unbalanced</strong>, Σ<i class="vx">F</i> points the same way as Δ<i class="vx">v</i>.</p>
+  <p class="story-tip story-only">Press <strong>▶ Play</strong> or drag the slider to watch the whole story. Look for the pattern: when the forces are <strong>balanced</strong>, <span class="sumf">Σ<i class="vx">F</i></span> = 0 and the velocity stays the same. When they are <strong>unbalanced</strong>, <span class="sumf">Σ<i class="vx">F</i></span> points the same way as Δ<i class="vx">v</i>.</p>
 
   <div class="top">
     <section class="panel rep" aria-labelledby="desc-h">
@@ -430,6 +431,55 @@ function barbs(tx, ty, ux, uy, hl, hw, color, w){
   return `<path d="${barb(1)} ${barb(-1)}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 // Δv arrows use a filled TikZ -stealth tip so they read differently from the open-barbed velocity arrows.
+// ΣF is not a force, so it is drawn differently from every force (Richard's hand-drawn style): an orange hollow
+// double-line arrow, two parallel lines with an open outlined head. h = half the shaft's width.
+// When ΣF lies along the same line as the forces (elevator, parachutist), draw it in the column of a force whose
+// stretch of the line it doesn't overlap, preferring the last force in the chain (Richard: in the elevator's past,
+// ΣF lines up with F_T). items = [{p, sh}] with each arrow's screen nudge. Returns the screen shift for ΣF:
+// [0,0] when nothing is collinear with it, a column's nudge when one is free, or null when none is.
+function sumColumn(start, u, m, items, lastId){
+  const cols = new Map(); let any = false;
+  for (const { p, sh } of items) {
+    const v = dir(p.f);
+    if (Math.abs(u[0]*v[1] - u[1]*v[0]) > 0.01 || Math.abs((start[0]-p.x)*v[1] - (start[1]-p.y)*v[0]) > 0.05) continue;
+    any = true;
+    const tip = tipOf(p), t0 = (p.x-start[0])*u[0] + (p.y-start[1])*u[1], t1 = (tip[0]-start[0])*u[0] + (tip[1]-start[1])*u[1];
+    const key = sh.map(Math.round).join(',');
+    if (!cols.has(key)) cols.set(key, { sh, blocked:false, last:false });
+    const c = cols.get(key);
+    if (Math.min(Math.max(t0, t1), m) - Math.max(Math.min(t0, t1), 0) > 0.05) c.blocked = true;
+    if (p.id === lastId) c.last = true;
+  }
+  if (!any) return [0, 0];
+  const free = [...cols.values()].filter(c => !c.blocked).sort((a, b) => b.last - a.last);
+  return free.length ? free[0].sh : null;
+}
+// Spots for the ΣF label hugging the hollow arrow: beside its middle, just outside the outline (half-width hw),
+// on the side away from the forces (cen = their center). The far side is a costly fallback.
+function sumLabelCands(a, b, w, hh, hw, cen){
+  const L = Math.hypot(b[0]-a[0], b[1]-a[1]) || 1, u = [(b[0]-a[0])/L, (b[1]-a[1])/L], n = [-u[1], u[0]];
+  const mid = [(a[0]+b[0])/2, (a[1]+b[1])/2], d = (mid[0]-cen[0])*n[0] + (mid[1]-cen[1])*n[1];
+  const side = Math.abs(d) < 1 ? -1 : Math.sign(d), ext = Math.abs(n[0])*w/2 + Math.abs(n[1])*hh/2, out = [];
+  for (const sd of [side, -side])
+    for (const t of [0.5, 0.4, 0.6, 0.3, 0.7])
+      for (const off of [3, 8, 14]) {
+        const g = hw + off + ext;
+        out.push({ cx:a[0] + u[0]*L*t + n[0]*sd*g, cy:a[1] + u[1]*L*t + n[1]*sd*g, pen:(sd === side ? 0 : 400) + Math.abs(t-0.5)*40 + off });
+      }
+  // a very short ΣF: just past its head, too
+  for (const off of [6, 12]) out.push({ cx:b[0] + u[0]*(off + Math.abs(u[0])*w/2 + Math.abs(u[1])*hh/2), cy:b[1] + u[1]*(off + Math.abs(u[0])*w/2 + Math.abs(u[1])*hh/2), pen:60 + off });
+  return out;
+}
+// the outline's two long edges, for label placement (labels must clear the whole width, not just the center line)
+function sumEdges(a, b, h){
+  const L = Math.hypot(b[0]-a[0], b[1]-a[1]) || 1, n = [-(b[1]-a[1])/L*2.4*h, (b[0]-a[0])/L*2.4*h];
+  return [[[a[0]+n[0], a[1]+n[1]], [b[0]+n[0], b[1]+n[1]]], [[a[0]-n[0], a[1]-n[1]], [b[0]-n[0], b[1]-n[1]]]];
+}
+function sumArrow(x1,y1,x2,y2,h=5){
+  const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L, nx=-uy, ny=ux;
+  const hl=Math.min(3.2*h, L*0.55), hw=2.4*h, b=[x2-ux*hl, y2-uy*hl], P2=(p,k)=>`${r1(p[0]+nx*k)},${r1(p[1]+ny*k)}`;
+  return `<path d="M${P2([x1,y1],h)} L${P2(b,h)} L${P2(b,hw)} L${r1(x2)},${r1(y2)} L${P2(b,-hw)} L${P2(b,-h)} L${P2([x1,y1],-h)}Z" fill="none" stroke="var(--sum)" stroke-width="${r1(Math.max(1.6, h*0.55))}" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
 function stealthArrow(x1,y1,x2,y2,color,w){
   const dx=x2-x1, dy=y2-y1, L=Math.hypot(dx,dy)||1, ux=dx/L, uy=dy/L, nx=-uy, ny=ux;
   const hl=Math.min(L*0.6, 4.5*w), hw=2*w, b=[x2-ux*hl, y2-uy*hl], inner=[x2-ux*hl*0.7, y2-uy*hl*0.7];
@@ -770,10 +820,10 @@ function renderWatchVAD(){
   arr.forEach(p => {
     const u = dir(p.f);
     const back = done.some(q => { const v = dir(q.f); return u[0]*v[0] + u[1]*v[1] < -0.999 && Math.abs((p.x-q.x)*v[1] - (p.y-q.y)*v[0]) < 0.05; });
-    const sh = back ? [u[1]*5, u[0]*5] : [0, 0], a = Q(p.x, p.y), b = Q(...tipOf(p));
+    const sh = back ? [u[1]*12, u[0]*12] : [0, 0], a = Q(p.x, p.y), b = Q(...tipOf(p));
     const t = [a[0]+sh[0], a[1]+sh[1]], tp = [b[0]+sh[0], b[1]+sh[1]];
     h += arrow(t[0], t[1], tp[0], tp[1], fcol(p.f), 3);
-    geo.push({ p, t, tp }); segs.push([t, tp]); blobs.push([tp[0], tp[1], 7]);
+    geo.push({ p, t, tp, sh }); segs.push([t, tp]); blobs.push([tp[0], tp[1], 7]);
     done.push(p);
   });
   let sum = null;
@@ -783,21 +833,26 @@ function renderWatchVAD(){
     else {
       let b = Q(...A.endTip), aa = a;
       const u = [A.sum[0]/m, A.sum[1]/m];
-      if (arr.some(p => { const v = dir(p.f); return Math.abs(u[0]*v[1]-u[1]*v[0]) < 0.01 && Math.abs((A.startTail[0]-p.x)*v[1] - (A.startTail[1]-p.y)*v[0]) < 0.05; })) { const s2 = [-u[1]*9, -u[0]*9]; aa = [a[0]+s2[0], a[1]+s2[1]]; b = [b[0]+s2[0], b[1]+s2[1]]; }
+      let col = sumColumn(A.startTail, u, m, geo.map(g => ({ p:g.p, sh:g.sh })), A.order.at(-1));
+      if (!col) { const nudged = geo.find(g => g.sh[0] || g.sh[1]); let n = [-u[1], -u[0]];
+        if (nudged && n[0]*nudged.sh[0] + n[1]*nudged.sh[1] > 0) n = [-n[0], -n[1]];
+        col = [n[0]*12, n[1]*12]; }
+      aa = [a[0]+col[0], a[1]+col[1]]; b = [b[0]+col[0], b[1]+col[1]];
       const show = story() || st.showSum;
-      h += show ? stealthArrow(aa[0], aa[1], b[0], b[1], 'var(--warn)', 2.6)
+      h += show ? sumArrow(aa[0], aa[1], b[0], b[1], 3.4)
         : `<line x1="${r1(aa[0])}" y1="${r1(aa[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}" stroke="var(--warn)" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>`;
-      segs.push([aa, b]); sum = { closed:false, a:aa, b, show };
+      segs.push([aa, b]); if (show) segs.push(...sumEdges(aa, b, 3.4)); sum = { closed:false, a:aa, b, show };
     }
   }
   // labels: placed clear of every arrow and of each other (ΣF first, then the longest forces)
+  const fp = geo.flatMap(g => [g.t, g.tp]), fcen = [fp.reduce((q, p) => q + p[0], 0)/fp.length, fp.reduce((q, p) => q + p[1], 0)/fp.length];
   const { place, besideSegment, aroundPoint } = makePlacer(segs, blobs, { x0:4, y0:26, x1:236, y1:236 }, [120,128], [{ x0:4, y0:4, x1:110, y1:26 }]);
   if (sum && sum.closed) {
     const w = tw(`500 14px ${MATH}`, 'Σ = 0') + tw(`italic 500 14px ${MATH}`, 'F') + 6, r = place(aroundPoint(sum.a, w, 18, 12), w, 18);
     h += `<text class="lbl lab" x="${r1((r.x0+r.x1)/2)}" y="${r1((r.y0+r.y1)/2)}" text-anchor="middle" dominant-baseline="middle" font-size="14"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> = 0</tspan></text>`;
   } else if (sum && sum.show) {
-    const w = mathW(SUMF, 14) + 6, r = place(besideSegment(sum.a, sum.b, w, 20), w, 20);
-    h += `<g class="lab">${mathText((r.x0+r.x1)/2, (r.y0+r.y1)/2 + 5, SUMF, 'middle', 14, 'var(--warn)')}</g>`;
+    const w = mathW(SUMF, 14) + 4, r = place(sumLabelCands(sum.a, sum.b, w, 20, 2.4*3.4, fcen), w, 20);
+    h += `<g class="lab">${mathText((r.x0+r.x1)/2, (r.y0+r.y1)/2 + 5, SUMF, 'middle', 14, 'var(--sum)')}</g>`;
   }
   [...geo].filter(g => g.p.len*k > 14).sort((x, y) => y.p.len - x.p.len).forEach(g => {
     const w = tw(`italic 500 13px ${MATH}`, 'F') + tw(`500 8.84px ${MATH}`, sub(g.p.f)) + 6, r = place(besideSegment(g.t, g.tp, w, 18), w, 18);
@@ -966,13 +1021,13 @@ function renderVAD(){
   });
   const A = analyze(pm);
   // Collinear arrows that double back (N up after F_g down) are drawn nudged sideways so both stay visible.
-  const SHIFT = 8, geo = [];
+  const SHIFT = 18, geo = [];   // wide enough for the hollow ΣF arrow to fit between opposite forces
   arr.forEach(p => {
     const u = dir(p.f), t = P(p.x, p.y), tp = P(...tipOf(p));
     const back = geo.some(g => { const v = dir(g.p.f); if (u[0]*v[0] + u[1]*v[1] > -0.999) return false;
       return Math.abs((p.x - g.p.x)*v[1] - (p.y - g.p.y)*v[0]) < 0.05; });
     const s = back ? [u[1]*SHIFT, u[0]*SHIFT] : [0, 0];   // screen right-hand side of the arrow
-    geo.push({ p, f:p.f, t:[t[0]+s[0], t[1]+s[1]], tp:[tp[0]+s[0], tp[1]+s[1]], col:fcol(p.f), k:!story() && known(p.f) });
+    geo.push({ p, f:p.f, s, t:[t[0]+s[0], t[1]+s[1]], tp:[tp[0]+s[0], tp[1]+s[1]], col:fcol(p.f), k:!story() && known(p.f) });
   });
   const segs = geo.map(g => [g.t, g.tp]), pts = geo.flatMap(g => [g.t, g.tp]);
   const cen = pts.length ? [pts.reduce((s,q)=>s+q[0],0)/pts.length, pts.reduce((s,q)=>s+q[1],0)/pts.length] : [CX,CY];
@@ -992,11 +1047,16 @@ function renderVAD(){
     if (m >= CLOSE_TOL) {
       let b = P(...A.endTip);
       const u = [A.sum[0]/m, A.sum[1]/m];
-      const lies = arr.some(p => { const v = dir(p.f); return Math.abs(u[0]*v[1]-u[1]*v[0]) < 0.01 && Math.abs((A.startTail[0]-p.x)*v[1] - (A.startTail[1]-p.y)*v[0]) < 0.05; });
-      if (lies) { const s = [-u[1]*SHIFT*1.8, -u[0]*SHIFT*1.8]; a = [a[0]+s[0], a[1]+s[1]]; b = [b[0]+s[0], b[1]+s[1]]; }
-      h += showSum ? `<g class="vis">${stealthArrow(a[0], a[1], b[0], b[1], 'var(--warn)', 3.2)}</g>`
+      let col = sumColumn(A.startTail, u, m, geo.map(g => ({ p:g.p, sh:g.s })), A.order.at(-1));
+      if (!col) {   // no free column: beside the line, away from any nudged arrow
+        const nudged = geo.find(g => g.s[0] || g.s[1]); let n = [-u[1], -u[0]];
+        if (nudged && n[0]*nudged.s[0] + n[1]*nudged.s[1] > 0) n = [-n[0], -n[1]];
+        col = [n[0]*SHIFT, n[1]*SHIFT];
+      }
+      a = [a[0]+col[0], a[1]+col[1]]; b = [b[0]+col[0], b[1]+col[1]];
+      h += showSum ? `<g class="vis">${sumArrow(a[0], a[1], b[0], b[1], 5)}</g>`
         : `<line class="vis" x1="${r1(a[0])}" y1="${r1(a[1])}" x2="${r1(b[0])}" y2="${r1(b[1])}" stroke="var(--warn)" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/>`;
-      segs.push([a,b]);
+      segs.push([a,b]); if (showSum) segs.push(...sumEdges(a, b, 5));
       sigma = { kind:'gap', a, b };
     } else {
       h += `<circle class="closed" cx="${r1(a[0])}" cy="${r1(a[1])}" r="13"/>`;
@@ -1034,8 +1094,8 @@ function renderVAD(){
   let lh = '';
   if (sigma) {
     if (sigma.kind === 'gap' && showSum) {
-      const w = mathW(SUMF, 20) + 10, hh = 30, r = place(besideSegment(sigma.a, sigma.b, w, hh), w, hh);
-      lh += `<g class="lab">${mathText((r.x0+r.x1)/2, (r.y0+r.y1)/2 + 7, SUMF, 'middle', 20, 'var(--warn)')}</g>`;
+      const w = mathW(SUMF, 20) + 6, hh = 28, r = place(sumLabelCands(sigma.a, sigma.b, w, hh, 2.4*5, cen), w, hh);
+      lh += `<g class="lab">${mathText((r.x0+r.x1)/2, (r.y0+r.y1)/2 + 7, SUMF, 'middle', 20, 'var(--sum)')}</g>`;
     } else {
       const sym = sigma.kind === 'gap' ? '≠' : '=';
       const w = tw(`500 20px ${MATH}`, 'Σ') + tw(`italic 500 20px ${MATH}`, 'F') + tw(`500 20px ${MATH}`, ` ${sym} 0`) + 10, hh = 28;
@@ -1184,8 +1244,12 @@ function animLayer(){
       const m = away(start, 30);
       h += `<circle class="closed" cx="${r1(start[0])}" cy="${r1(start[1])}" r="13"/><text class="lbl" x="${r1(m[0])}" y="${r1(m[1])}" text-anchor="middle" dominant-baseline="middle" font-size="20"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> = 0</tspan></text>`;
     } else if (st.showSum) {
-      const m = away([(start[0]+end[0])/2, (start[1]+end[1])/2], 26);
-      h += stealthArrow(start[0], start[1], end[0], end[1], 'var(--warn)', 3.2) + mathText(m[0], m[1]+7, SUMF, 'middle', 20, 'var(--warn)');
+      // when ΣF lies along the line of the forces, draw it beside them so its outline stays clear
+      const L = Math.hypot(end[0]-start[0], end[1]-start[1]) || 1, n = [-(end[1]-start[1])/L, (end[0]-start[0])/L];
+      const along = arr.some(p => { const q0 = P(p.x, p.y), q1 = P(...tipOf(p)); return Math.abs((q1[0]-q0[0])*n[0] + (q1[1]-q0[1])*n[1]) < 1 && Math.abs((q0[0]-start[0])*n[0] + (q0[1]-start[1])*n[1]) < 2; });
+      const o = along ? 24 : 0, s0 = [start[0]+n[0]*o, start[1]+n[1]*o], e0 = [end[0]+n[0]*o, end[1]+n[1]*o];
+      const m = away([(s0[0]+e0[0])/2, (s0[1]+e0[1])/2], 26);
+      h += sumArrow(s0[0], s0[1], e0[0], e0[1], 6) + mathText(m[0], m[1]+7, SUMF, 'middle', 20, 'var(--sum)');
     } else {
       const m = away([(start[0]+end[0])/2, (start[1]+end[1])/2], 22);
       h += `<line x1="${r1(start[0])}" y1="${r1(start[1])}" x2="${r1(end[0])}" y2="${r1(end[1])}" stroke="var(--warn)" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/><text class="lbl gap" x="${r1(m[0])}" y="${r1(m[1])}" text-anchor="middle" dominant-baseline="middle" font-size="20"><tspan>Σ</tspan><tspan font-style="italic">F</tspan><tspan> ≠ 0</tspan></text>`;
@@ -1260,15 +1324,15 @@ function renderPhase(){
 }
 // Forces → ΣF → Δv → motion, for the current part (story mode)
 const DIR_WORD = { 0:'right', 90:'up', 180:'left', 270:'down', 30:'up the hill', 210:'down the hill' };
-const miniArrow = (ang, col) => `<svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true"><g transform="rotate(${-ang})">${arrow(-11, 0, 11, 0, col, 2.6)}</g></svg>`;
+const miniArrow = (ang, col) => `<svg width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true"><g transform="rotate(${-ang})">${col === 'sum' ? sumArrow(-12, 0, 12, 0, 3.2) : arrow(-11, 0, 11, 0, col, 2.6)}</g></svg>`;
 function renderChain(){
-  const ph = PH(), obj = sc().obj, sf = 'Σ<i class="vx">F</i>', dv = 'Δ<i class="vx">v</i>';
+  const ph = PH(), obj = sc().obj, sf = '<span class="sumf">Σ<i class="vx">F</i></span>', dv = 'Δ<i class="vx">v</i>';
   const box = (lbl, body, svg = '') => `<div class="link">${svg}<span><small>${lbl}</small><strong>${body}</strong></span></div>`, then = '<span class="then" aria-hidden="true">→</span>';
   let h;
   if (ph.dv == null) h = box('FORCES', 'Balanced') + then + box(sf, `${sf} = 0`) + then + box(dv, `${dv} = 0`) + then + box('MOTION', `Constant velocity: the ${obj} keeps moving ${DIR_WORD[sc().move]} at the same speed`);
   else {
     const w = DIR_WORD[ph.dv] || 'that way', same = angDiff(ph.dv, sc().move) < 90;
-    h = box('FORCES', 'Unbalanced') + then + box(sf, `points ${w}`, miniArrow(ph.dv, 'var(--warn)')) + then + box(dv, `points ${w}`, miniArrow(ph.dv, 'var(--dv)')) + then +
+    h = box('FORCES', 'Unbalanced') + then + box(sf, `points ${w}`, miniArrow(ph.dv, 'sum')) + then + box(dv, `points ${w}`, miniArrow(ph.dv, 'var(--dv)')) + then +
       box('MOTION', `${ph.kind === 'up' ? 'Speeding up' : 'Slowing down'}: ${sf} points ${same ? 'the same way' : 'opposite to the way'} the ${obj} is moving`);
   }
   $('#chain').innerHTML = h;
