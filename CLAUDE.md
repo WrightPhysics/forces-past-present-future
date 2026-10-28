@@ -127,7 +127,7 @@ For example, the block becomes F_g down → push right → F_N up → friction l
 | 1 Hover puck (moving left) | your hand pushes it from rest (P = 0.5 W) | F_g, F_N only | battery dies; floor friction slows it (0.5 W) |
 | 2 Block + finger (right) | push 1.2 W > friction 0.6 W | push = friction = 0.6 W (3 N on 5 N) | finger lifts; friction alone |
 | 3 Child on sidewalk (right) | sidewalk friction speeds him up | F_g, F_N only | steps onto floor; floor friction slows him (F_NCF, F_fCF) |
-| 4 Parachutist (down) | chute opens: drag 2 W slows them (v from 3 to 1) | drag = weight | landing: ground N 0.9 W + drag 0.6 W |
+| 4 Parachutist (down) | chute opens: drag 2 W slows them (v from 3 to 1) | drag = weight | landing: ground N 1.5 W; drag ignored once the feet touch (Richard: the normal force dwarfs it) |
 | 5 Elevator (down) | T = 0.8 W, speeds up downward | T = W | T = 1.2 W, slows to a stop |
 | 6 Car up 30° icy hill | T = 1.0 W (Richard asked for it to differ clearly from the present) | T = 0.5 W | cable snaps: slows to a stop for an instant, about to slide back (ΣF 0.5 W both ways, so the graph ends at 0) |
 
