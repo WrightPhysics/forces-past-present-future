@@ -304,7 +304,7 @@ const CLOSE_TOL = 0.25;  // grid units: a VAD this close to its start counts as 
 const DIR_TOL = 15;      // degrees: ΣF and Δv count as "the same direction" within this
 const PLAY_MS = 3400;    // story playback: time spent on each part
 const TWEEN_MS = 650;
-const TYPE_COL = { g:0, N:2, f:3, T:1, P:1, D:4 };
+const TYPE_COL = { g:0, N:2, f:3, tr:3, T:1, P:1, D:4 };
 const PH_NAME = ['PAST', 'PRESENT', 'FUTURE'], PH_SUB = ['How did it get here?', 'the snapshot', 'What would change it?'];
 
 /* Each scenario: the book's text, a key, the direction of motion in the snapshot (world degrees, y up),
@@ -339,8 +339,8 @@ const SCN = [
     key:'C = child, S = moving sidewalk, F = floor, E = Earth',
     v:[[0,1],[1,1],[1,0]],
     phases:[
-      { kind:'up', dv:0, desc:'The child was standing still on the floor and stepped onto the moving sidewalk. Friction from the sidewalk on his feet sped him up until he moved along with it at 2 m/s.',
-        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'S',ang:90,mag:1},{t:'f',on:'C',by:'S',ang:0,mag:0.3}] },
+      { kind:'up', dv:0, desc:'The child was standing still on the floor and stepped onto the moving sidewalk. Traction from the sidewalk on his feet sped him up until he moved along with it at 2 m/s.',
+        forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'S',ang:90,mag:1},{t:'tr',on:'C',by:'S',ang:0,mag:0.3}] },
       { kind:'const', dv:null, desc:'The child stands still on the sidewalk and rides along with it at a constant 2 m/s. He isn’t speeding up or slowing down, so the sidewalk doesn’t need to push him forward.',
         forces:[{t:'g',on:'C',by:'E',ang:270,mag:1},{t:'N',on:'C',by:'S',ang:90,mag:1}] },
       { kind:'down', dv:180, desc:'At the end of the sidewalk, the child steps off onto the floor, which isn’t moving. Friction from the floor on his feet slows him down until he stops.',
@@ -1003,7 +1003,7 @@ function renderChips(){
   $('#chips').innerHTML = PH().forces.map((f,i) =>
     `<li><button class="chip" data-i="${i}" data-f="${i}" aria-pressed="${pm.has(i)}"><span class="sw" style="background:${fcol(f)}"></span>${htmlLabel(f)}</button></li>`).join('');
 }
-const TYPE_NAME = { g:'Gravitational', N:'Normal', f:'Friction', T:'Tension', P:'Push', D:'Drag' };
+const TYPE_NAME = { g:'Gravitational', N:'Normal', f:'Friction', tr:'Traction', T:'Tension', P:'Push', D:'Drag' };
 function renderForceKey(){
   const names = {};
   sc().key.split(',').forEach(part => { const [k, v] = part.split('=').map(t => t.trim()); names[k] = v[0].toUpperCase() + v.slice(1); });
